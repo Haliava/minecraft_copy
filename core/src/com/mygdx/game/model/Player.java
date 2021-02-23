@@ -18,9 +18,9 @@ public class Player extends GameObject {
     }
 
     public Model get_model(float w, float h, float d) {
-        return modelBuilder.createBox(w, h, d,
-            new Material(ColorAttribute.createDiffuse(Color.WHITE)),
-            VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal);
+        // new Material(ColorAttribute.createDiffuse(Color.WHITE)), VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal)
+        return modelBuilder.createRect(0f, 0f, 0f, 4f, 4f, 0f, 4f, 4f, 12f, 4f, 4f, 0f, 0f, 0f, 0f,
+                new Material(ColorAttribute.createDiffuse(Color.WHITE)), VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal);
     }
 
     public boolean is_attacking() {
