@@ -8,10 +8,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.mygdx.game.view.GameScreen;
 
-class SimpleGame extends Game {
+public class Main extends Game {
 	Screen gameScreen;
-	Vector3 touchPoint;
-	Rectangle leftBounds, rightBounds;
+	public static int WIDTH = 2200;
+	public static int HEIGHT = 1080;
 
 	@Override
 	public void create() {
@@ -21,10 +21,6 @@ class SimpleGame extends Game {
 
 	@Override
 	public void render() {
-		leftBounds = new Rectangle(0, 0, 80, 80);
-		rightBounds = new Rectangle(80, 0, 80, 80);
-		touchPoint = new Vector3();
-
 		gameScreen.render(0.05f);
 	}
 

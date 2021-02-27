@@ -6,21 +6,38 @@ import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.control.Controls;
 
 public class Player extends GameObject {
     Inventory inventory;
-    ModelBuilder modelBuilder;
+    float MAX_SPEED = .5f;
+    float velocityX, velocityY, velocityZ;
 
-    public Player(int x, int y, int z, int[] size, float health, Inventory inventory, Model model) {
+    public Player(int x, int y, int z, int[] size, float health, Model model) {
         super(x, y, z, size, health, model);
-        this.inventory = inventory;
-        modelBuilder = new ModelBuilder();
+        velocityX = 0;
+        velocityY = 0;
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
-    public Model get_model(float w, float h, float d) {
-        // new Material(ColorAttribute.createDiffuse(Color.WHITE)), VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal)
-        return modelBuilder.createRect(0f, 0f, 0f, 4f, 4f, 0f, 4f, 4f, 12f, 4f, 4f, 0f, 0f, 0f, 0f,
-                new Material(ColorAttribute.createDiffuse(Color.WHITE)), VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal);
+    public static Model createModel(float w, float h, float d, ModelBuilder modelBuilder) {
+        return modelBuilder.createCone(w, h, d, 3,
+                new Material(ColorAttribute.createDiffuse(Color.BLUE)),
+                VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+    }
+
+    public void update(Controls controls) {
+        if (controls.direction.x != Math.sqrt(-1) && controls.direction.y != Math.sqrt(-1)) {
+            velocityX = controls.direction.x * MAX_SPEED;
+            velocityZ = -controls.direction.y * MAX_SPEED;
+            x += velocityX;
+            z += velocityZ;
+            System.out.println("\n" + x + "\n" + y + "\n" + z);
+            this.transform.translate((float) x, (float) y, (float) z);
+        }
     }
 
     public boolean is_attacking() {

@@ -10,7 +10,7 @@ public abstract class GameObject extends ModelInstance {
     float health;
 
     public GameObject(int x, int y, int z, int size, float health, Model model) {
-        super(model);
+        super(model, x, y, z);
         this.x = x;
         this.y = y;
         this.z = z;
@@ -19,7 +19,7 @@ public abstract class GameObject extends ModelInstance {
     }
 
     public GameObject(float x, float y, float z, int size, float health, Model model) {
-        super(model);
+        super(model, x, y, z);
         this.x = x;
         this.y = y;
         this.z = z;
@@ -28,7 +28,7 @@ public abstract class GameObject extends ModelInstance {
     }
 
     public GameObject(float x, float y, float z, int[] size, float health, Model model) {
-        super(model);
+        super(model, x, y, z);
         this.x = x;
         this.y = y;
         this.z = z;

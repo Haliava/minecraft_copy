@@ -10,7 +10,6 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 
 public class Block extends GameObject {
     public static float side_size = 4f;
-    private static ModelBuilder modelBuilder = new ModelBuilder();
     Object material;
 
     public Block(float x, float y, float z, int size, float health, Model model) {
@@ -18,7 +17,7 @@ public class Block extends GameObject {
     }
 
 
-    public static Model createModel(float w, float h, float d) {
+    public static Model createModel(float w, float h, float d, ModelBuilder modelBuilder) {
         return modelBuilder.createBox(w, h, d,
                 new Material(ColorAttribute.createDiffuse(Color.OLIVE)),
                 VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal);
