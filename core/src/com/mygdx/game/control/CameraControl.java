@@ -25,49 +25,26 @@ public class CameraControl extends CameraInputController implements InputProcess
     }
 
     @Override
-    public boolean keyDown(int keycode) {
-        super.keyDown(keycode);
-        return false;
-    }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        super.keyUp(keycode);
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (!(controls.isInsideControls(screenX, screenY)))
+            super.touchDown(screenX, screenY, pointer, button);
         multitouch(screenX, Main.HEIGHT - screenY, true, pointer);
-        super.touchDown(screenX, screenY, pointer, button);
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        multitouch(screenX, Main.HEIGHT - screenY, false, pointer);
-        if (screenX > controls.circleBounds.x + controls.circleR && screenY > controls.circleBounds.y + controls.circleR)
+        if (!(controls.isInsideControls(screenX, screenY)))
             super.touchUp(screenX, screenY, pointer, button);
+        multitouch(screenX, Main.HEIGHT - screenY, false, pointer);
         return false;
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        multitouch(screenX, Main.HEIGHT - screenY, true, pointer);
-        if (screenX > controls.circleBounds.x * 2 && screenY > controls.circleBounds.y)
+        if (!(controls.isInsideControls(screenX, screenY)))
             super.touchDragged(screenX, screenY, pointer);
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        if (screenX > controls.circleBounds.x && screenY > controls.circleBounds.y)
-            super.mouseMoved(screenX, screenY);
+        multitouch(screenX, Main.HEIGHT - screenY, true, pointer);
         return false;
     }
 

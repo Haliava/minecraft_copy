@@ -58,13 +58,13 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        map_width = 10;
-        map_length = 10;
+        map_width = 16;
+        map_length = 16;
         camera = new PerspectiveCamera(75, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.position.set(0f, 16f, 0f);
         camera.lookAt(-18f, 5f, 12f);
         camera.near = .1f;
-        camera.far = 150f;
+        camera.far = 500f;
 
         modelBatch = new ModelBatch();
         spriteBatch = new SpriteBatch();
@@ -75,8 +75,8 @@ public class GameScreen implements Screen {
         OpenSimplexNoise noise = new OpenSimplexNoise();
         for (int i = -map_length; i < map_length; i++)
             for (int j = -map_width; j < map_width; j++) {
-                float noise_result = (float) noise.eval(0.04 * i, 0.04 * j) * 24;
-                map.add_block(new Block(Block.side_size * i, noise_result, Block.side_size * j, 16, 10, cube));
+                float noise_result = (float) (noise.eval(0.03 * i, 0.07 * j) * 12 * Block.side_size);
+                map.add_block(new Block(Block.side_size * i, noise_result, Block.side_size * j, (int) Block.side_size, 10, Main.BLOCK_TYPES[0],cube));
                 //models.add(new ModelInstance(cube, 4f * i, (float) Noise.noise(0.1 * i, 0.1 * j, 0) * 16,4f * j));     НЕОФИЦИАЛЬНАЯ РЕАЛИЗАЦИЯ ШУМА ПЕРЛИНА
                 //models.add(new ModelInstance(cube, 4f * i, (float) NoisePerlin.noise(0.08 * i, 0.08 * j) * 10,4f * j)); ОФИЦИАЛЬНАЯ РЕАЛИЗАЦИЯ ШУМА ПЕРЛИНА
             }
@@ -101,7 +101,7 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(135 / 255f, 206 / 255f, 235 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-        camera.position.set((float) player.x, (float) player.y, (float) player.z);
+        camera.position.set(player.x, player.y, player.z);
 
         camera.update();
         modelBatch.begin(camera);
@@ -137,5 +137,6 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         modelBatch.dispose();
+        spriteBatch.dispose();
     }
 }

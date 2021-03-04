@@ -12,6 +12,9 @@ public class Main extends Game {
 	Screen gameScreen;
 	public static int WIDTH = 2200;
 	public static int HEIGHT = 1080;
+	public static String[] BLOCK_TYPES = new String[] {
+			"grass", "dirt", "stone", "cobblestone"
+	};
 
 	@Override
 	public void create() {

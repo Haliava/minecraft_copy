@@ -4,13 +4,15 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 
 public abstract class GameObject extends ModelInstance {
-    public double x, y, z;
+    public float x, y, z;
+    protected int ID;
     int size;
     int[] diff_size;
     float health;
 
     public GameObject(int x, int y, int z, int size, float health, Model model) {
         super(model, x, y, z);
+        ID = 0;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -36,8 +38,11 @@ public abstract class GameObject extends ModelInstance {
         this.health = health;
     }
 
-    public void take_damage() {
-    }
+    public int getID() { return ID; }
+
+    public void setID(int ID) { this.ID = ID; }
+
+    public void take_damage(int damage) { this.health -= damage; }
 
     public boolean is_broken() {
         return this.health <= 0;

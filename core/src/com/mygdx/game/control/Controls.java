@@ -4,12 +4,13 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture;
+import com.mygdx.game.Main;
 
 
 public class Controls {
+    public Vector2 direction;
     Texture circleImg, stickImg;
     Circle circleBounds, stickBounds;
-    public Vector2 direction;
     Vector2 initialStickCords;
     float circleR, stickR;
     int fingerNumber = -1;
@@ -51,6 +52,12 @@ public class Controls {
     }
 
     public float getDistance(float dx, float dy) { return (float) Math.sqrt(dx * dx + dy * dy); }
-    public boolean isInsideControls(float touchX, float touchY) { return touchX * touchX + touchY * touchY < (circleBounds.x + circleR) * (circleBounds.y + circleR); }
-    public boolean isOverlapping(Circle c1, Circle c2, float targetX, float targetY) { return c1.radius + c2.radius > getDistance(c1.x - targetX, c1.y -  targetY) + 20; }
+
+    public boolean isInsideControls(float touchX, float touchY) {
+        return touchX * touchX + (Main.HEIGHT - touchY * touchY) < (circleBounds.x) * (circleBounds.y);
+    }
+
+    public boolean isOverlapping(Circle c1, Circle c2, float targetX, float targetY) {
+        return c1.radius + c2.radius > getDistance(c1.x - targetX, c1.y -  targetY) + 20;
+    }
 }

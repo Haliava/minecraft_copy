@@ -12,9 +12,9 @@ import com.mygdx.game.control.Controls;
 public class Player extends GameObject {
     Inventory inventory;
     float MAX_SPEED = .5f;
-    float velocityX, velocityY, velocityZ;
+    public float velocityX, velocityY, velocityZ;
 
-    public Player(int x, int y, int z, int[] size, float health, Model model) {
+    public Player(float x, float y, float z, int[] size, float health, Model model) {
         super(x, y, z, size, health, model);
         velocityX = 0;
         velocityY = 0;
@@ -32,11 +32,11 @@ public class Player extends GameObject {
     public void update(Controls controls) {
         if (controls.direction.x != Math.sqrt(-1) && controls.direction.y != Math.sqrt(-1)) {
             velocityX = controls.direction.x * MAX_SPEED;
-            velocityZ = -controls.direction.y * MAX_SPEED;
+            velocityZ = controls.direction.y * MAX_SPEED;
             x += velocityX;
             z += velocityZ;
-            System.out.println("\n" + x + "\n" + y + "\n" + z);
-            this.transform.translate((float) x, (float) y, (float) z);
+            System.out.println("\n" + "x:" + x + "\n" + "y:" + y + "\n" + "z:" + z);
+            this.transform.translate(x, y, z);
         }
     }
 
