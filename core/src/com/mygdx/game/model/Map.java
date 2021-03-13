@@ -5,22 +5,20 @@ import java.util.HashMap;
 
 public class Map {
     public int sizeX, sizeY;
-    public ArrayList<Chunk> chunkMap;
+    public Chunk[][] chunkMap;
 
     public Map(int sizeX, int sizeY) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
-        chunkMap = new ArrayList<>();
+        chunkMap = new Chunk[sizeX][sizeY];
     }
 
     public void add_chunk(Chunk chunk) {
-        if (!chunkMap.contains(chunk)) {
-            chunkMap.add(chunk);
-        }
+        chunkMap[chunk.chunkX][chunk.chunkY] = chunk;
     }
 
-    public void clear() {
-        this.chunkMap.clear();
+    public Chunk get_chunk(int x, int y) {
+        return chunkMap[x][y];
     }
 
     public String toString() {

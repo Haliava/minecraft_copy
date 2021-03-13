@@ -1,5 +1,6 @@
 package com.mygdx.game.model;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -29,14 +30,14 @@ public class Player extends GameObject {
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
     }
 
-    public void update(Controls controls) {
+    public void update(Controls controls, Camera camera) {
         if (controls.direction.x != Math.sqrt(-1) && controls.direction.y != Math.sqrt(-1)) {
             velocityX = controls.direction.x * MAX_SPEED;
             velocityZ = controls.direction.y * MAX_SPEED;
             x += velocityX;
             z += velocityZ;
             //System.out.println("\n" + "x:" + x + "\n" + "y:" + y + "\n" + "z:" + z);
-            this.transform.translate(x, y, z);
+            camera.translate(x, y, z);
         }
     }
 

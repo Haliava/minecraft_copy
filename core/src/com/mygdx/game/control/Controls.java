@@ -49,6 +49,7 @@ public class Controls {
         float distance = getDistance(deltaX, deltaY);
         if (distance == 0) direction.set(0, 0);
         else direction.set(-(deltaX / distance), -(deltaY / distance));
+        System.out.println(direction);
     }
 
     public float getDistance(float dx, float dy) { return (float) Math.sqrt(dx * dx + dy * dy); }

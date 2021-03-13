@@ -22,9 +22,12 @@ public class Chunk {
 
     public Chunk() {
         this.blockMap = new HashMap<>();
+        this.chunkY = 0;
+        this.chunkX = 0;
     }
 
-    public Chunk createChunk(int startI, int startY, int startZ, Model blockModel) {
+    public static Chunk createChunk(int startI, int startY, int startZ, Model blockModel) {
+        java.util.Map<Integer, Block> blockMap = new HashMap<>();
         OpenSimplexNoise noise = new OpenSimplexNoise();
         for (int i = startI; i < startI + sizeX; i++)
             for (int j = startY; j < startY + sizeX; j++) {
@@ -35,9 +38,9 @@ public class Chunk {
                 //models.add(new ModelInstance(cube, 4f * i, (float) Noise.noise(0.1 * i, 0.1 * j, 0) * 16,4f * j));    НЕОФИЦИАЛЬНАЯ РЕАЛИЗАЦИЯ ШУМА ПЕРЛИНА
                 //models.add(new ModelInstance(cube, 4f * i, (float) NoisePerlin.noise(0.08 * i, 0.08 * j) * 10,4f * j)); ОФИЦИАЛЬНАЯ РЕАЛИЗАЦИЯ ШУМА ПЕРЛИНА
             }
-        chunkX = startI / sizeX;
-        chunkY = startY / sizeX;
-        return this;
+        int chunkX = startI / sizeX;
+        int chunkY = startY / sizeX;
+        return new Chunk(blockMap, chunkX, chunkY);
     }
 
     public void drawBlocks(ModelBatch modelBatch, Environment environment) {

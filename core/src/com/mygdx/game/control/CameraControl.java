@@ -3,6 +3,7 @@ package com.mygdx.game.control;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Main;
 import com.mygdx.game.model.Player;
 
@@ -28,7 +29,6 @@ public class CameraControl extends CameraInputController implements InputProcess
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (!(controls.isInsideControls(screenX, screenY)))
             super.touchDown(screenX, screenY, pointer, button);
-        multitouch(screenX, Main.HEIGHT - screenY, true, pointer);
         return false;
     }
 
