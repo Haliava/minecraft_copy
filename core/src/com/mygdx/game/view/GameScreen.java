@@ -8,7 +8,10 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -31,6 +34,7 @@ import com.badlogic.gdx.utils.Predicate;
 import com.mygdx.game.Main;
 import com.mygdx.game.control.CameraControl;
 import com.mygdx.game.control.Controls;
+import com.mygdx.game.control.Physics;
 import com.mygdx.game.model.Block;
 import com.mygdx.game.model.Chunk;
 import com.mygdx.game.model.Map;
@@ -45,6 +49,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
 
+import javax.xml.soap.Text;
 import javax.xml.transform.Result;
 
 public class GameScreen implements Screen {
@@ -65,6 +70,7 @@ public class GameScreen implements Screen {
     CameraControl cameraControl;
     Controls controls;
     Texture outerCircle, innerCircle;
+    TextureRegion region;
     DebugDrawer debugDrawer;
 
     @Override
@@ -80,7 +86,7 @@ public class GameScreen implements Screen {
         modelBatch = new ModelBatch();
         spriteBatch = new SpriteBatch();
         builder = new ModelBuilder();
-        cube = Block.createModel(Block.side_size, Block.side_size, Block.side_size, builder);
+        cube = Block.createModel(builder);
         map = new Map(map_width, map_length);
         chunkCoords = new HashMap<>();
 
@@ -109,8 +115,9 @@ public class GameScreen implements Screen {
         //Gdx.input.setInputProcessor(cameraInputController);
         Gdx.input.setInputProcessor(cameraControl);
 
-        //debugDrawer = new DebugDrawer();
-        //debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE);
+        /*debugDrawer = new DebugDrawer();
+        Physics.world.setDebugDrawer(debugDrawer);
+        debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE);*/
     }
 
     @Override
@@ -120,21 +127,14 @@ public class GameScreen implements Screen {
         camera.position.set(player.x, player.y, player.z);
         int currentChunkCoordX = (int) ((int) player.x / (Chunk.sizeX * Block.side_size));
         int currentChunkCoordY = (int) ((int) player.z / (Chunk.sizeX * Block.side_size));
-        createNearestChunks(currentChunkCoordX, currentChunkCoordY, 4);
+        createNearestChunks(currentChunkCoordX, currentChunkCoordY, Main.RENDER_DISTANCE);
 
         camera.update();
         modelBatch.begin(camera);
-        /*for (int i = 0; i < map.chunkMap.length; i++) {
-            for (int j = 0; j < map.chunkMap.length; j++) {
-                map.get_chunk(i, j).drawBlocks(modelBatch, environment);
-            }
-        }*/
         for (int[] x: toRender) {
             try {
                 map.get_chunk(x[0], x[1]).drawBlocks(modelBatch, environment);
-            } catch (ArrayIndexOutOfBoundsException ignored) {
-            }
-
+            } catch (ArrayIndexOutOfBoundsException ignored) { }
         }
         modelBatch.render(player, environment);
         player.update(controls, camera);

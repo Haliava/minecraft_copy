@@ -4,10 +4,12 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.mygdx.game.Main;
+import com.mygdx.game.control.Physics;
 
 import java.util.HashMap;
 
 public class Chunk {
+    //static Physics physics = new Physics();
     public static int sizeX = 16;
     public static int sizeZ = 1;
     public int chunkX;
@@ -32,11 +34,13 @@ public class Chunk {
         for (int i = startI; i < startI + sizeX; i++)
             for (int j = startY; j < startY + sizeX; j++) {
                 float noise_result = (float) (noise.eval(0.03 * i, 0.05 * j) * 12 * Block.side_size);
-                blockMap.put(Main.ID, new Block(Block.side_size * i, noise_result, Block.side_size * j,
-                        (int) Block.side_size, 10, Main.BLOCK_TYPES[0], blockModel));
+                float perlin_unofficial = (float) (Noise.noise(0.03 * i, 0.05 * j, 0.05 * (i + j)) * 12 * Block.side_size); // НЕОФИЦИАЛЬНАЯ РЕАЛИЗАЦИЯ ШУМА ПЕРЛИНА
+                float perlin_official = (float) NoisePerlin.noise(0.08 * i, 0.05 * j) * 12 * Block.side_size; // ОФИЦИАЛЬНАЯ РЕАЛИЗАЦИЯ ШУМА ПЕРЛИНА
+                Block block = new Block(Block.side_size * i, perlin_official - (perlin_official % Block.side_size), Block.side_size * j,
+                        (int) Block.side_size, 10, Main.BLOCK_TYPES[0], blockModel);
+                blockMap.put(Main.ID, block);
+                //Physics.AddRigidBody(block.nodes, block.transform);
                 Main.ID++;
-                //models.add(new ModelInstance(cube, 4f * i, (float) Noise.noise(0.1 * i, 0.1 * j, 0) * 16,4f * j));    НЕОФИЦИАЛЬНАЯ РЕАЛИЗАЦИЯ ШУМА ПЕРЛИНА
-                //models.add(new ModelInstance(cube, 4f * i, (float) NoisePerlin.noise(0.08 * i, 0.08 * j) * 10,4f * j)); ОФИЦИАЛЬНАЯ РЕАЛИЗАЦИЯ ШУМА ПЕРЛИНА
             }
         int chunkX = startI / sizeX;
         int chunkY = startY / sizeX;

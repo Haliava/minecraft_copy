@@ -1,0 +1,90 @@
+
+atlas.png
+size: 128, 64
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+bedrock
+  rotate: false
+  xy: 36, 36
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+brick
+  rotate: false
+  xy: 36, 18
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+diamond_block
+  rotate: false
+  xy: 54, 36
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+dirt
+  rotate: false
+  xy: 54, 18
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+grass
+  rotate: false
+  xy: 2, 20
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+gravel
+  rotate: false
+  xy: 72, 36
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+log_oak
+  rotate: false
+  xy: 2, 2
+  size: 32, 16
+  orig: 32, 16
+  offset: 0, 0
+  index: -1
+planks_oak
+  rotate: false
+  xy: 72, 18
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+sand
+  rotate: false
+  xy: 90, 36
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+stone
+  rotate: false
+  xy: 90, 18
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+stonebrick
+  rotate: false
+  xy: 108, 36
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+torch_on
+  rotate: false
+  xy: 108, 18
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
