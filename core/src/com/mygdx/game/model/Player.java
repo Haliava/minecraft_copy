@@ -8,17 +8,18 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
+import com.mygdx.game.Main;
 import com.mygdx.game.control.Controls;
 
 public class Player extends GameObject {
     Inventory inventory;
-    float MAX_SPEED = 2f;
     public float velocityX, velocityY, velocityZ;
 
     public Player(float x, float y, float z, int[] size, float health, Model model) {
         super(x, y, z, size, health, model);
         velocityX = 0;
         velocityY = 0;
+        velocityZ = 0;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -30,14 +31,15 @@ public class Player extends GameObject {
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
     }
 
-    public void update(Controls controls, Camera camera) {
-        if (controls.direction.x != Math.sqrt(-1) && controls.direction.y != Math.sqrt(-1)) {
-            velocityX = controls.direction.x * MAX_SPEED;
-            velocityZ = controls.direction.y * MAX_SPEED;
+    public void update(Controls controls) {
+        if (controls.direction.x != Math.sqrt(-1) && controls.direction.z != Math.sqrt(-1)) {
+            velocityX = controls.direction.x * Main.MAX_VELOCITY;
+            velocityZ = controls.direction.z * Main.MAX_VELOCITY;
+            velocityY = controls.direction.y;
             x += velocityX;
             z += velocityZ;
+            y += velocityY;
             //System.out.println("\n" + "x:" + x + "\n" + "y:" + y + "\n" + "z:" + z);
-            camera.translate(x, y, z);
         }
     }
 

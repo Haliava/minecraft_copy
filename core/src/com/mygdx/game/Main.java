@@ -12,11 +12,15 @@ import com.mygdx.game.view.GameScreen;
 public class Main extends Game {
 	Screen gameScreen;
 	public static int RENDER_DISTANCE = 2;
+	public static int GRAVITY = 5;
+	public static int MAX_HEIGHT = 10;
 	public static int WIDTH = 2200;
 	public static int HEIGHT = 1080;
+	public static float MAX_VELOCITY = 2f;
+	public static float ROTATION_ANGLE = 10f;
 	public static int ID = 1;
 	public static String[] BLOCK_TYPES = new String[] {
-			"grass", "dirt", "stone", "cobblestone"
+			"air", "grass", "dirt", "stone", "cobblestone"
 	};
 	public static TextureAtlas atlas;
 

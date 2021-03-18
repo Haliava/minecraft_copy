@@ -13,7 +13,8 @@ public class BlocksMaterial {
             new Material(TextureAttribute.createDiffuse(Main.atlas.findRegion("grass"))),
             new Material(TextureAttribute.createDiffuse(Main.atlas.findRegion("dirt"))),
             new Material(TextureAttribute.createDiffuse(Main.atlas.findRegion("stone"))),
-            new Material(TextureAttribute.createDiffuse(Main.atlas.findRegion("planks_oak")))
+            new Material(TextureAttribute.createDiffuse(Main.atlas.findRegion("planks_oak"))),
+            new Material(TextureAttribute.createDiffuse(Main.atlas.findRegion("bedrock")))
     };
 
     public static Material[] grass = new Material[] {

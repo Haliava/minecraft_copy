@@ -56,6 +56,7 @@ public class GameScreen implements Screen {
     int map_width;
     int map_length;
     ArrayList<int[]> toRender = new ArrayList<>();
+    Vector3 temp = new Vector3();
     HashMap<int[], Chunk> chunkCoords;
     Map map;
     PerspectiveCamera camera;
@@ -70,7 +71,6 @@ public class GameScreen implements Screen {
     CameraControl cameraControl;
     Controls controls;
     Texture outerCircle, innerCircle;
-    TextureRegion region;
     DebugDrawer debugDrawer;
 
     @Override
@@ -79,7 +79,6 @@ public class GameScreen implements Screen {
         map_length = 16;
         camera = new PerspectiveCamera(75, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.position.set(0f, 16f, 0f);
-        camera.lookAt(-18f, 5f, 12f);
         camera.near = .1f;
         camera.far = 500f;
 
@@ -108,7 +107,7 @@ public class GameScreen implements Screen {
 
         outerCircle = new Texture("outer.png");
         innerCircle = new Texture("inner.png");
-        controls = new Controls(outerCircle, innerCircle, new Vector2(300, 300), Main.HEIGHT / 3);
+        controls = new Controls(outerCircle, innerCircle, innerCircle, new Vector2(300, 300), Main.HEIGHT / 3);
 
         cameraControl = new CameraControl(camera, player, controls);
         cameraInputController = new CameraInputController(camera);
@@ -124,12 +123,15 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(135 / 255f, 206 / 255f, 235 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
         camera.position.set(player.x, player.y, player.z);
+        camera.position.add(temp.set(camera.direction).scl(Main.ROTATION_ANGLE));
+        camera.update();
+
         int currentChunkCoordX = (int) ((int) player.x / (Chunk.sizeX * Block.side_size));
         int currentChunkCoordY = (int) ((int) player.z / (Chunk.sizeX * Block.side_size));
         createNearestChunks(currentChunkCoordX, currentChunkCoordY, Main.RENDER_DISTANCE);
 
-        camera.update();
         modelBatch.begin(camera);
         for (int[] x: toRender) {
             try {
@@ -137,7 +139,7 @@ public class GameScreen implements Screen {
             } catch (ArrayIndexOutOfBoundsException ignored) { }
         }
         modelBatch.render(player, environment);
-        player.update(controls, camera);
+        player.update(controls);
         modelBatch.end();
         spriteBatch.begin();
         controls.draw(spriteBatch);

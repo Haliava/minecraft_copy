@@ -4,26 +4,29 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Main;
+import com.mygdx.game.model.Player;
 
 
 public class Controls {
-    public Vector2 direction;
-    Texture circleImg, stickImg;
-    Circle circleBounds, stickBounds;
+    public Vector3 direction;
+    Texture circleImg, stickImg, jumpImg;
+    Circle circleBounds, stickBounds, jumpBounds;
     Vector2 initialStickCords;
     float circleR, stickR;
     int fingerNumber = -1;
 
-    public Controls(Texture circleImg, Texture stickImg, Vector2 vector2, float size) {
+    public Controls(Texture circleImg, Texture stickImg, Texture jumpImg, Vector2 vector2, float size) {
         this.circleImg = circleImg;
         this.stickImg = stickImg;
+        this.jumpImg = jumpImg;
         this.circleR = size / 2;
         this.stickR = size / 4;
         this.initialStickCords = vector2;
         this.circleBounds = new Circle(vector2, this.circleR);
         this.stickBounds = new Circle(vector2, this.stickR);
-        direction = new Vector2(0, 0);
+        direction = new Vector3(0, 0,0);
     }
 
     public void draw(SpriteBatch batch) {
@@ -40,15 +43,17 @@ public class Controls {
             control(initialStickCords.x, initialStickCords.y);
             fingerNumber = -1;
         }
+        if (fingerNumber == pointer && isTouched && isInsideJumpButton(touchX, touchY))
+            this.direction.y = -Main.MAX_VELOCITY;
     }
 
     public void control(float x, float y) {
         stickBounds.setPosition(x, y);
         float deltaX = circleBounds.x - stickBounds.x;
-        float deltaY = circleBounds.y - stickBounds.y;
-        float distance = getDistance(deltaX, deltaY);
-        if (distance == 0) direction.set(0, 0);
-        else direction.set(-(deltaX / distance), -(deltaY / distance));
+        float deltaZ = circleBounds.y - stickBounds.y;
+        float distance = getDistance(deltaX, deltaZ);
+        if (distance == 0) direction.set(0, 0, 0);
+        else direction.set(-(deltaX / distance), 0, -(deltaZ / distance));
         System.out.println(direction);
     }
 
@@ -56,6 +61,10 @@ public class Controls {
 
     public boolean isInsideControls(float touchX, float touchY) {
         return touchX * touchX + (Main.HEIGHT - touchY * touchY) < (circleBounds.x) * (circleBounds.y);
+    }
+
+    public boolean isInsideJumpButton(float touchX, float touchY) {
+        return false;
     }
 
     public boolean isOverlapping(Circle c1, Circle c2, float targetX, float targetY) {
