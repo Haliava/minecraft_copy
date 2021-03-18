@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.mygdx.game.model.Block;
 import com.mygdx.game.view.GameScreen;
 
 public class Main extends Game {
@@ -16,7 +17,7 @@ public class Main extends Game {
 	public static int MAX_HEIGHT = 10;
 	public static int WIDTH = 2200;
 	public static int HEIGHT = 1080;
-	public static float MAX_VELOCITY = 2f;
+	public static float MAX_VELOCITY = Block.side_size / 5;
 	public static float ROTATION_ANGLE = 10f;
 	public static int ID = 1;
 	public static String[] BLOCK_TYPES = new String[] {

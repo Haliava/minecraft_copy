@@ -32,23 +32,22 @@ public class Block extends GameObject {
         /*float ls = Block.side_size / 2; // short for localSize
         modelBuilder.begin();
         modelBuilder.part("top", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[0])).rect(
-                -ls,ls,-ls,  -ls,ls,ls,  ls,ls,ls,  ls,ls,-ls, 0f, 0f, -1f);
+                -ls,ls,-ls,  -ls,ls,ls,  ls,ls,ls,  ls,ls,-ls, 0f,0f,-1f);
 
         modelBuilder.part("front", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
-                -ls,-ls,-ls,  -ls,ls,-ls,  ls,ls,-ls,  ls,-ls,-ls, 0f, 0f, 1f);
+                -ls,-ls,-ls,  -ls,ls,-ls,  ls,ls,-ls,  ls,-ls,-ls, 0f,0f,1f);
 
         modelBuilder.part("left", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
-                -ls,-ls,ls,  -ls,-ls,-ls,  ls,-ls,-ls,  ls,-ls,ls, 0f, -1f, 0f);
+                -ls,-ls,ls,  -ls,-ls,-ls,  ls,-ls,-ls,  ls,-ls,ls, 0f,-1f,0f);
 
         modelBuilder.part("box", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
-                -ls, -ls, ls, -ls, -ls, -ls, ls, -ls, -ls, ls, -ls, ls, 0f, 1f, 0f);
+                -ls,-ls,ls, -ls,-ls,-ls, ls,-ls,-ls, ls,-ls,ls, 0f,1f,0f);
 
         modelBuilder.part("box", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect( // - - . - . . - . - - - -
-                -ls, -ls, ls, -ls, ls, ls, -ls, ls, -ls, -ls, -ls, -ls, -1f, 0f, 0f);
+                -ls,-ls,ls, -ls,ls,ls, -ls,ls,-ls, -ls,-ls,-ls, -1f,0f,0f);
 
         modelBuilder.part("box", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[2])).rect( // . - - . . - . . . . - .
-                ls, -ls, -ls, ls, ls, -ls, ls, ls, ls, ls, -ls, ls, 1f, 0f, 0f);
-
+                ls,-ls,-ls, ls,ls,-ls, ls,ls,ls, ls,-ls,ls, 1f,0f,0f);
         return modelBuilder.end();*/
         return modelBuilder.createBox(Block.side_size, Block.side_size, Block.side_size, BlocksMaterial.grass[2], attr);
     }
@@ -60,5 +59,9 @@ public class Block extends GameObject {
 
     public void draw(ModelBatch modelBatch, Environment environment) {
         if (!this.type.equals("air")) modelBatch.render(this, environment);
+    }
+
+    public float[] getCoords() {
+        return new float[] {x, y};
     }
 }

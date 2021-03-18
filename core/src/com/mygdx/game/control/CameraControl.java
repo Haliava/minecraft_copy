@@ -27,14 +27,14 @@ public class CameraControl extends CameraInputController implements InputProcess
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        if (!(controls.isInsideControls(screenX, screenY)))
+        if (!(controls.isInsideControls(screenX, screenY, controls.circleBounds)))
             super.touchDown(screenX, screenY, pointer, button);
         return false;
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (!(controls.isInsideControls(screenX, screenY)))
+        if (!(controls.isInsideControls(screenX, screenY, controls.circleBounds)))
             super.touchUp(screenX, screenY, pointer, button);
         multitouch(screenX, Main.HEIGHT - screenY, false, pointer);
         return false;
@@ -42,7 +42,7 @@ public class CameraControl extends CameraInputController implements InputProcess
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        if (!(controls.isInsideControls(screenX, screenY)))
+        if (!(controls.isInsideControls(screenX, screenY, controls.circleBounds)))
             super.touchDragged(screenX, screenY, pointer);
         multitouch(screenX, Main.HEIGHT - screenY, true, pointer);
         return false;

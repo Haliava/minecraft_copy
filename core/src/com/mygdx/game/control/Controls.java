@@ -24,47 +24,48 @@ public class Controls {
         this.circleR = size / 2;
         this.stickR = size / 4;
         this.initialStickCords = vector2;
+        Vector2 jumpCoords = new Vector2(Main.WIDTH - vector2.x, vector2.y);
         this.circleBounds = new Circle(vector2, this.circleR);
         this.stickBounds = new Circle(vector2, this.stickR);
+        this.jumpBounds = new Circle(jumpCoords, this.stickR);
         direction = new Vector3(0, 0,0);
     }
 
     public void draw(SpriteBatch batch) {
         batch.draw(circleImg, circleBounds.x - circleR, circleBounds.y - circleR, circleR * 2, circleR * 2);
         batch.draw(stickImg, stickBounds.x - stickR, stickBounds.y - stickR, stickR * 2, stickR * 2);
+        batch.draw(jumpImg, jumpBounds.x - stickR, jumpBounds.y - stickR, stickR * 2, stickR * 2);
     }
 
     public void update(float touchX, float touchY, boolean isTouched, int pointer) {
-        if (fingerNumber == -1 && isTouched && isInsideControls(touchX, touchY))
+        if (fingerNumber == -1 && isTouched && isInsideControls(touchX, touchY, circleBounds))
             fingerNumber = pointer;
         if (fingerNumber == pointer && isTouched && isOverlapping(circleBounds, stickBounds, touchX, touchY))
-            control(touchX, touchY);
+            control(touchX, touchY, 0);
         if ((fingerNumber == pointer && !isTouched) || (fingerNumber == pointer && isTouched && !isOverlapping(circleBounds, stickBounds, touchX, touchY))) {
-            control(initialStickCords.x, initialStickCords.y);
+            control(initialStickCords.x, initialStickCords.y, 0);
             fingerNumber = -1;
         }
-        if (fingerNumber == pointer && isTouched && isInsideJumpButton(touchX, touchY))
-            this.direction.y = -Main.MAX_VELOCITY;
+        /*if (fingerNumber == pointer && isTouched && isInsideControls(touchX, touchY, jumpBounds)) {
+            control(0, 0, -Main.MAX_VELOCITY);
+            System.out.println(123123);
+        }*/
     }
 
-    public void control(float x, float y) {
+    public void control(float x, float y, float z) {
         stickBounds.setPosition(x, y);
         float deltaX = circleBounds.x - stickBounds.x;
         float deltaZ = circleBounds.y - stickBounds.y;
         float distance = getDistance(deltaX, deltaZ);
         if (distance == 0) direction.set(0, 0, 0);
-        else direction.set(-(deltaX / distance), 0, -(deltaZ / distance));
-        System.out.println(direction);
+        else direction.set(-(deltaX / distance), z, -(deltaZ / distance));
+        //System.out.println(direction);
     }
 
     public float getDistance(float dx, float dy) { return (float) Math.sqrt(dx * dx + dy * dy); }
 
-    public boolean isInsideControls(float touchX, float touchY) {
-        return touchX * touchX + (Main.HEIGHT - touchY * touchY) < (circleBounds.x) * (circleBounds.y);
-    }
-
-    public boolean isInsideJumpButton(float touchX, float touchY) {
-        return false;
+    public boolean isInsideControls(float touchX, float touchY, Circle obj) {
+        return touchX * touchX + (Main.HEIGHT - touchY * touchY) < (obj.x) * (obj.y);
     }
 
     public boolean isOverlapping(Circle c1, Circle c2, float targetX, float targetY) {

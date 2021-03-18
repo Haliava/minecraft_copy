@@ -1,63 +1,35 @@
 package com.mygdx.game.view;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.VertexAttributes;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.RenderableProvider;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.bullet.Bullet;
-import com.badlogic.gdx.physics.bullet.DebugDrawer;
-import com.badlogic.gdx.physics.bullet.collision.*;
-import com.badlogic.gdx.physics.bullet.collision.btDispatcher;
-import com.badlogic.gdx.physics.bullet.linearmath.btIDebugDraw;
-import com.badlogic.gdx.utils.Predicate;
 import com.mygdx.game.Main;
 import com.mygdx.game.control.CameraControl;
 import com.mygdx.game.control.Controls;
-import com.mygdx.game.control.Physics;
 import com.mygdx.game.model.Block;
 import com.mygdx.game.model.Chunk;
 import com.mygdx.game.model.Map;
-import com.mygdx.game.model.Noise;
-import com.mygdx.game.model.NoisePerlin;
-import com.mygdx.game.model.OpenSimplexNoise;
 import com.mygdx.game.model.Player;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Set;
-
-import javax.xml.soap.Text;
-import javax.xml.transform.Result;
 
 public class GameScreen implements Screen {
     int map_width;
     int map_length;
     ArrayList<int[]> toRender = new ArrayList<>();
     Vector3 temp = new Vector3();
-    HashMap<int[], Chunk> chunkCoords;
     Map map;
     PerspectiveCamera camera;
     ModelBatch modelBatch;
@@ -71,7 +43,6 @@ public class GameScreen implements Screen {
     CameraControl cameraControl;
     Controls controls;
     Texture outerCircle, innerCircle;
-    DebugDrawer debugDrawer;
 
     @Override
     public void show() {
@@ -87,13 +58,10 @@ public class GameScreen implements Screen {
         builder = new ModelBuilder();
         cube = Block.createModel(builder);
         map = new Map(map_width, map_length);
-        chunkCoords = new HashMap<>();
 
         for (int i = 0; i < map_width; i++) {
             for (int j = 0; j < map_length; j++) {
-                Chunk currentChunk = Chunk.createChunk(
-                        Chunk.sizeX * i, Chunk.sizeX * j, 0, cube
-                );
+                Chunk currentChunk = new Chunk(Chunk.sizeX * i, Chunk.sizeX * j, cube);
                 map.add_chunk(currentChunk);
             }
         }
@@ -113,24 +81,18 @@ public class GameScreen implements Screen {
         cameraInputController = new CameraInputController(camera);
         //Gdx.input.setInputProcessor(cameraInputController);
         Gdx.input.setInputProcessor(cameraControl);
-
-        /*debugDrawer = new DebugDrawer();
-        Physics.world.setDebugDrawer(debugDrawer);
-        debugDrawer.setDebugMode(btIDebugDraw.DebugDrawModes.DBG_MAX_DEBUG_DRAW_MODE);*/
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(135 / 255f, 206 / 255f, 235 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-
         camera.position.set(player.x, player.y, player.z);
         camera.position.add(temp.set(camera.direction).scl(Main.ROTATION_ANGLE));
         camera.update();
 
-        int currentChunkCoordX = (int) ((int) player.x / (Chunk.sizeX * Block.side_size));
-        int currentChunkCoordY = (int) ((int) player.z / (Chunk.sizeX * Block.side_size));
-        createNearestChunks(currentChunkCoordX, currentChunkCoordY, Main.RENDER_DISTANCE);
+        player.getChunkCoords();
+        createNearestChunks(player.currentChunkCoordX, player.currentChunkCoordY, Main.RENDER_DISTANCE);
 
         modelBatch.begin(camera);
         for (int[] x: toRender) {
@@ -139,7 +101,7 @@ public class GameScreen implements Screen {
             } catch (ArrayIndexOutOfBoundsException ignored) { }
         }
         modelBatch.render(player, environment);
-        player.update(controls);
+        player.update(controls, delta, map);
         modelBatch.end();
         spriteBatch.begin();
         controls.draw(spriteBatch);

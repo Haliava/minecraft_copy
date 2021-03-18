@@ -4,17 +4,16 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.mygdx.game.Main;
-import com.mygdx.game.control.Physics;
 
 import java.util.HashMap;
 
 public class Chunk {
-    //static Physics physics = new Physics();
     public static int sizeX = 16;
     public static int sizeZ = 20;
     public int chunkX;
     public int chunkY;
     private java.util.Map<Integer, Block> blockMap;
+    public java.util.Map<Integer, Block> coordsBlockMap;
 
     public Chunk(java.util.Map<Integer, Block> blockMap, int chunkX, int chunkY) {
         this.blockMap = blockMap;
@@ -22,14 +21,16 @@ public class Chunk {
         this.chunkY = chunkY;
     }
 
-    public Chunk() {
-        this.blockMap = new HashMap<>();
+    public Chunk(int startI, int startY, Model blockModel) {
+        blockMap = new HashMap<>();
+        coordsBlockMap = new HashMap<>();
         this.chunkY = 0;
         this.chunkX = 0;
+
+        initialise(startI, startY, blockModel);
     }
 
-    public static Chunk createChunk(int startI, int startY, int startZ, Model blockModel) {
-        java.util.Map<Integer, Block> blockMap = new HashMap<>();
+    public void initialise(int startI, int startY, Model blockModel) {
         OpenSimplexNoise noise = new OpenSimplexNoise();
         for (int i = startI; i < startI + sizeX; i++)
             for (int j = startY; j < startY + sizeX; j++) {
@@ -39,13 +40,13 @@ public class Chunk {
                 Block block = new Block(Block.side_size * i, perlin_official - (perlin_official % Block.side_size), Block.side_size * j,
                         (int) Block.side_size, 10, Main.BLOCK_TYPES[1], blockModel);
                 blockMap.put(Main.ID, block);
-                //Physics.AddRigidBody(block.nodes, block.transform);
+                coordsBlockMap.put((int) ((int)perlin_official - (perlin_official % Block.side_size)), block);
                 Main.ID++;
                 /*for (int k = -sizeZ; k < sizeZ; k++) {
                     if (k * Block.side_size < block.y) {
                         blockMap.put(Main.ID, new Block(Block.side_size * i,
                                 perlin_official - (perlin_official % Block.side_size) + k * Block.side_size, Block.side_size * j,
-                                (int) Block.side_size, 10, Main.BLOCK_TYPES[1], blockModel));
+                                (int) Block.side_size, 10, Main.BLOCK_TYPES[0], blockModel));
                     } else {
                         blockMap.put(Main.ID, new Block(Block.side_size * i,
                                 perlin_official - (perlin_official % Block.side_size) - k * Block.side_size, Block.side_size * j,
@@ -54,9 +55,8 @@ public class Chunk {
                     Main.ID++;
                 }*/
             }
-        int chunkX = startI / sizeX;
-        int chunkY = startY / sizeX;
-        return new Chunk(blockMap, chunkX, chunkY);
+        chunkX = startI / sizeX;
+        chunkY = startY / sizeX;
     }
 
     public void drawBlocks(ModelBatch modelBatch, Environment environment) {
@@ -66,6 +66,10 @@ public class Chunk {
 
     public Block getBlock(int ID) {
         return blockMap.get(ID);
+    }
+
+    public Block getBlockByYCoord(int y) {
+        return coordsBlockMap.get(y);
     }
 
     public void addBlock(Block block) {
