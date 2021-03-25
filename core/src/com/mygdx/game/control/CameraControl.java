@@ -20,7 +20,7 @@ public class CameraControl extends CameraInputController implements InputProcess
     }
 
     public void multitouch(int touchX, int touchY, boolean isTouched, int pointer) {
-        for (int i = 0; i < 2; i++) {
+        for (int i = 0; i < 3; i++) {
             controls.update(touchX, touchY, isTouched, pointer);
         }
     }
@@ -29,6 +29,7 @@ public class CameraControl extends CameraInputController implements InputProcess
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (!(controls.isInsideControls(screenX, screenY, controls.circleBounds)))
             super.touchDown(screenX, screenY, pointer, button);
+        multitouch(screenX, Main.HEIGHT - screenY, true, pointer);
         return false;
     }
 
@@ -45,11 +46,6 @@ public class CameraControl extends CameraInputController implements InputProcess
         if (!(controls.isInsideControls(screenX, screenY, controls.circleBounds)))
             super.touchDragged(screenX, screenY, pointer);
         multitouch(screenX, Main.HEIGHT - screenY, true, pointer);
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(float amountX, float amountY) {
         return false;
     }
 }

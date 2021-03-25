@@ -52,11 +52,6 @@ public class Block extends GameObject {
         return modelBuilder.createBox(Block.side_size, Block.side_size, Block.side_size, BlocksMaterial.grass[2], attr);
     }
 
-    public static Model createModel(ModelBuilder modelBuilder, int type) {
-        int attr = (VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal|VertexAttributes.Usage.TextureCoordinates);
-        return modelBuilder.createBox(Block.side_size, Block.side_size, Block.side_size, BlocksMaterial.listOfMaterials[type], attr);
-    }
-
     public void draw(ModelBatch modelBatch, Environment environment) {
         if (!this.type.equals("air")) modelBatch.render(this, environment);
     }

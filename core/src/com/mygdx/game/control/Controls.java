@@ -1,7 +1,10 @@
 package com.mygdx.game.control;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
@@ -14,20 +17,23 @@ public class Controls {
     Texture circleImg, stickImg, jumpImg;
     Circle circleBounds, stickBounds, jumpBounds;
     Vector2 initialStickCords;
+    Camera camera;
     float circleR, stickR;
     int fingerNumber = -1;
+    boolean isJumping = false;
 
-    public Controls(Texture circleImg, Texture stickImg, Texture jumpImg, Vector2 vector2, float size) {
+    public Controls(Texture circleImg, Texture stickImg, Texture jumpImg, Vector2 vector2, float size, Camera camera) {
+        Vector2 jumpCoords = new Vector2(Main.WIDTH - vector2.x, vector2.y);
         this.circleImg = circleImg;
         this.stickImg = stickImg;
         this.jumpImg = jumpImg;
         this.circleR = size / 2;
         this.stickR = size / 4;
         this.initialStickCords = vector2;
-        Vector2 jumpCoords = new Vector2(Main.WIDTH - vector2.x, vector2.y);
         this.circleBounds = new Circle(vector2, this.circleR);
         this.stickBounds = new Circle(vector2, this.stickR);
         this.jumpBounds = new Circle(jumpCoords, this.stickR);
+        this.camera = camera;
         direction = new Vector3(0, 0,0);
     }
 
@@ -38,34 +44,60 @@ public class Controls {
     }
 
     public void update(float touchX, float touchY, boolean isTouched, int pointer) {
-        if (fingerNumber == -1 && isTouched && isInsideControls(touchX, touchY, circleBounds))
+        //System.out.println(jumpBounds.x + ", " + jumpBounds.y + "\n" + stickBounds.x + ", " + stickBounds.y + "\n" + touchX + ", " + touchY);
+        if (fingerNumber == -1 && isTouched && (isInsideControls(touchX, touchY, circleBounds) || isInsideControls(touchX, touchY, jumpBounds)))
             fingerNumber = pointer;
+        if (isInsideJumpControls(touchX, touchY))
+            control(0, 0, Main.MAX_VELOCITY);
         if (fingerNumber == pointer && isTouched && isOverlapping(circleBounds, stickBounds, touchX, touchY))
             control(touchX, touchY, 0);
         if ((fingerNumber == pointer && !isTouched) || (fingerNumber == pointer && isTouched && !isOverlapping(circleBounds, stickBounds, touchX, touchY))) {
             control(initialStickCords.x, initialStickCords.y, 0);
             fingerNumber = -1;
         }
-        /*if (fingerNumber == pointer && isTouched && isInsideControls(touchX, touchY, jumpBounds)) {
-            control(0, 0, -Main.MAX_VELOCITY);
-            System.out.println(123123);
-        }*/
     }
 
     public void control(float x, float y, float z) {
-        stickBounds.setPosition(x, y);
+        /*if (z == 0) stickBounds.setPosition(x, y);
         float deltaX = circleBounds.x - stickBounds.x;
         float deltaZ = circleBounds.y - stickBounds.y;
         float distance = getDistance(deltaX, deltaZ);
-        if (distance == 0) direction.set(0, 0, 0);
-        else direction.set(-(deltaX / distance), z, -(deltaZ / distance));
-        //System.out.println(direction);
+        if (z != 0 && !isJumping) {
+            direction.set(0, z, 0);
+        }
+        else if (distance == 0) direction.set(0, 0, 0);
+        else direction.set(-(deltaX / distance), z, -(deltaZ / distance));*/
+        if (z == 0) stickBounds.setPosition(x, y);
+        float deltaX = circleBounds.x - stickBounds.x;
+        float deltaZ = circleBounds.y - stickBounds.y;
+        float distance = getDistance(deltaX, deltaZ);
+        if (z != 0 && !isJumping) {
+            direction.set(0, z, 0);
+        } else if (distance == 0) direction.set(0, 0 ,0);
+        else {
+            /*direction.rotate(new Vector3(), (float) Math.toDegrees(Math.cos(
+                    (direction.x * camera.direction.x + direction.y * camera.direction.y + direction.z * camera.direction.z) /
+                            (Math.sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z) *
+                                    Math.sqrt(camera.direction.x * camera.direction.x + camera.direction.y * camera.direction.y + camera.direction.z * camera.direction.z))
+            )));*/
+            int multX = camera.direction.x >= 0 ? 1: -1;
+            int multY = camera.direction.y >= 0 ? 1: -1;
+            int multZ = camera.direction.z >= 0 ? 1: -1;
+            direction.set((deltaX / distance) * multX, z, (deltaZ / distance) * multZ);
+
+            Gdx.app.log("camera", String.valueOf(camera.direction));
+        }
     }
 
     public float getDistance(float dx, float dy) { return (float) Math.sqrt(dx * dx + dy * dy); }
 
     public boolean isInsideControls(float touchX, float touchY, Circle obj) {
         return touchX * touchX + (Main.HEIGHT - touchY * touchY) < (obj.x) * (obj.y);
+    }
+
+    public boolean isInsideJumpControls(float touchX, float touchY) {
+        return ((touchX >= (jumpBounds.x - 2 * jumpBounds.radius) && touchX <= (jumpBounds.x + 2 * jumpBounds.radius))
+                && (touchY >= (jumpBounds.y - 2 * jumpBounds.radius) && touchY <= (jumpBounds.y + 2 * jumpBounds.radius)));
     }
 
     public boolean isOverlapping(Circle c1, Circle c2, float targetX, float targetY) {

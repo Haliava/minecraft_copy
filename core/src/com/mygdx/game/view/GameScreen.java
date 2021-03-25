@@ -28,9 +28,9 @@ import java.util.ArrayList;
 public class GameScreen implements Screen {
     int map_width;
     int map_length;
+    Map map;
     ArrayList<int[]> toRender = new ArrayList<>();
     Vector3 temp = new Vector3();
-    Map map;
     PerspectiveCamera camera;
     ModelBatch modelBatch;
     SpriteBatch spriteBatch;
@@ -42,14 +42,12 @@ public class GameScreen implements Screen {
     CameraInputController cameraInputController;
     CameraControl cameraControl;
     Controls controls;
-    Texture outerCircle, innerCircle;
+    Texture outerCircle, innerCircle, jumpCircle;
 
     @Override
     public void show() {
-        map_width = 16;
-        map_length = 16;
         camera = new PerspectiveCamera(75, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.position.set(0f, 16f, 0f);
+        camera.position.set(0f, 12f, 0f);
         camera.near = .1f;
         camera.far = 500f;
 
@@ -57,7 +55,7 @@ public class GameScreen implements Screen {
         spriteBatch = new SpriteBatch();
         builder = new ModelBuilder();
         cube = Block.createModel(builder);
-        map = new Map(map_width, map_length);
+        map = new Map(Main.MAP_WIDTH, Main.MAP_LENGTH);
 
         for (int i = 0; i < map_width; i++) {
             for (int j = 0; j < map_length; j++) {
@@ -67,7 +65,8 @@ public class GameScreen implements Screen {
         }
 
         playerModel = Player.createModel(4f, 8f, 12f, builder);
-        player = new Player(60, 12, 60, new int[]{(int) Block.side_size, (int) Block.side_size * 2}, 10f, playerModel);
+        player = new Player(5 * Block.side_size, 5 * Block.side_size, 5 * Block.side_size,
+                new int[]{(int) Block.side_size, (int) Block.side_size * 2}, 10f, playerModel);
 
         environment = new Environment();
         environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.8f, 0.8f, 1));
@@ -75,7 +74,8 @@ public class GameScreen implements Screen {
 
         outerCircle = new Texture("outer.png");
         innerCircle = new Texture("inner.png");
-        controls = new Controls(outerCircle, innerCircle, innerCircle, new Vector2(300, 300), Main.HEIGHT / 3);
+        jumpCircle = new Texture("inner.png");
+        controls = new Controls(outerCircle, innerCircle, jumpCircle, new Vector2(300, 300), Main.HEIGHT / 3, camera);
 
         cameraControl = new CameraControl(camera, player, controls);
         cameraInputController = new CameraInputController(camera);
@@ -101,7 +101,7 @@ public class GameScreen implements Screen {
             } catch (ArrayIndexOutOfBoundsException ignored) { }
         }
         modelBatch.render(player, environment);
-        player.update(controls, delta, map);
+        player.update(controls, delta, Main.WORLD_MAP);
         modelBatch.end();
         spriteBatch.begin();
         controls.draw(spriteBatch);
