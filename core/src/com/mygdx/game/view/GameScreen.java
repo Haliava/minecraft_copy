@@ -28,7 +28,6 @@ import java.util.ArrayList;
 public class GameScreen implements Screen {
     int map_width;
     int map_length;
-    Map map;
     ArrayList<int[]> toRender = new ArrayList<>();
     Vector3 temp = new Vector3();
     PerspectiveCamera camera;
@@ -55,12 +54,11 @@ public class GameScreen implements Screen {
         spriteBatch = new SpriteBatch();
         builder = new ModelBuilder();
         cube = Block.createModel(builder);
-        map = new Map(Main.MAP_WIDTH, Main.MAP_LENGTH);
 
-        for (int i = 0; i < map_width; i++) {
-            for (int j = 0; j < map_length; j++) {
-                Chunk currentChunk = new Chunk(Chunk.sizeX * i, Chunk.sizeX * j, cube);
-                map.add_chunk(currentChunk);
+        for (int i = 0; i < Main.MAP_WIDTH; i++) {
+            for (int j = 0; j < Main.MAP_LENGTH; j++) {
+                Chunk currentChunk = new Chunk(Chunk.sizeX * i, Chunk.sizeX * j, Main.WORLD_MAP, cube);
+                Main.WORLD_MAP.add_chunk(currentChunk);
             }
         }
 
@@ -97,7 +95,7 @@ public class GameScreen implements Screen {
         modelBatch.begin(camera);
         for (int[] x: toRender) {
             try {
-                map.get_chunk(x[0], x[1]).drawBlocks(modelBatch, environment);
+                Main.WORLD_MAP.get_chunk(x[0], x[1]).drawBlocks(modelBatch, environment);
             } catch (ArrayIndexOutOfBoundsException ignored) { }
         }
         modelBatch.render(player, environment);

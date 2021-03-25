@@ -14,6 +14,7 @@ public class Chunk {
     public int chunkX;
     public int chunkY;
     private Map<String, Block> blockMap;
+    private Block[][][] bMap;
     public java.util.Map<Integer, Block> coordsBlockMap;
 
     public Chunk(Map<String, Block> blockMap, int chunkX, int chunkY) {
@@ -22,23 +23,31 @@ public class Chunk {
         this.chunkY = chunkY;
     }
 
-    public Chunk(int startI, int startY, Model blockModel) {
+    public Chunk(int startI, int startY, Block[][][] map, Model blockModel) {
         blockMap = new HashMap<>();
         coordsBlockMap = new HashMap<>();
         this.chunkY = 0;
         this.chunkX = 0;
+        this.bMap = map;
 
         initialise(startI, startY, blockModel);
     }
 
     public void initialise(int startI, int startY, Model blockModel) {
-        /*for (int i = startI; i < startI + sizeX; i++) {
+        chunkX = startI / sizeX;
+        chunkY = startY / sizeX;
+        for (int i = startI; i < startI + sizeX; i++) {
             for (int j = startY; j < startY + sizeX; j++) {
                 for (int k = 0; k < sizeZ; k++) {
                     float perlin_official = (float) NoisePerlin.noise(0.08 * i, 0.05 * j) * 12 * Block.side_size;
+                    Block block = new Block(Block.side_size * i, perlin_official - (perlin_official % Block.side_size), Block.side_size * j,
+                            (int) Block.side_size, 10, Main.BLOCK_TYPES[1], blockModel);
+                    bMap[i][(int) ((perlin_official - (perlin_official % Block.side_size)) / Block.side_size)][k] = block;
+                    blockMap.put(Main.ID, block);
+                    Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + k;
                 }
             }
-        }*/
+        }
 
         int counterX = 0, counterY = 0, counterZ = 0;
         Model voidModel = new Model();

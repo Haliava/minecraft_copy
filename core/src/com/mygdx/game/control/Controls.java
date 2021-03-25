@@ -84,8 +84,6 @@ public class Controls {
             int multY = camera.direction.y >= 0 ? 1: -1;
             int multZ = camera.direction.z >= 0 ? 1: -1;
             direction.set((deltaX / distance) * multX, z, (deltaZ / distance) * multZ);
-
-            Gdx.app.log("camera", String.valueOf(camera.direction));
         }
     }
 

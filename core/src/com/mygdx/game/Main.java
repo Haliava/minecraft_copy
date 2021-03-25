@@ -18,7 +18,7 @@ public class Main extends Game {
 	public static int MAP_LENGTH = 2;
 	public static Map WORLD_MAP = new Map(MAP_WIDTH, MAP_LENGTH);
 	public static int RENDER_DISTANCE = 2;
-	public static int GRAVITY = 15;
+	public static int GRAVITY = 0; //15
 	public static int MAX_HEIGHT = 10;
 	public static int MIN_HEIGHT = -5;
 	public static int WIDTH = 2200;
