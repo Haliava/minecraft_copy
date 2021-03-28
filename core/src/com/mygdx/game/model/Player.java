@@ -55,18 +55,14 @@ public class Player extends GameObject {
             //System.out.println(y);
         }
         try {
-            int y_in = (int) Block.side_size * ((int) (y / Block.side_size) + 1);
-            String type = map.get_chunk(currentChunkCoordX, currentChunkCoordY).
-                    getBlockByYCoord(y_in).type;
-            String type2 = map.get_chunk(currentChunkCoordX, currentChunkCoordY).getBlock(currentChunkCoordX + "" + currentChunkCoordY +
-                    "" + (x / Block.side_size) + "" + (y / Block.side_size) + (z / Block.side_size)).type;
-            System.out.println(type2.equals("air"));
+            String type = Main.WORLD_MAP.blockMap[(int) (x / Block.side_size)][(int) (y / Block.side_size) - 2][(int) (z / Block.side_size)].type;
+            //System.out.println((int) (x / Block.side_size) + ", " + (int) ((y / Block.side_size) - 2) + ", " + ((int) (z / Block.side_size)) + "\n");
             if (!map.get_chunk(currentChunkCoordX, currentChunkCoordY).
                     getBlockByYCoord((int) Block.side_size * ((int) (y / Block.side_size) + 1)).type.equals("air") && velocityY >= 0) {
                 accumulatedGravity = 0;
             } else accumulatedGravity += Main.GRAVITY * dTime;
         } catch (Exception e) {
-            //System.out.println(currentChunkCoordX + "" + currentChunkCoordY +"" + (int)(x / Block.side_size) + "" + (Math.abs((int)(y / Block.side_size)) +2 * (int) Block.side_size) + "" + (int)(z / Block.side_size));
+            //System.out.println("ERROR" + e);
             accumulatedGravity += Main.GRAVITY * dTime;
         }
         y -= accumulatedGravity * dTime;

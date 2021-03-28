@@ -5,17 +5,18 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.mygdx.game.Main;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Chunk {
     public static int sizeX = 16;
-    public static int sizeZ = 16;
+    public static int sizeY = 16;
     public int chunkX;
     public int chunkY;
     private Map<String, Block> blockMap;
     private Block[][][] bMap;
-    public java.util.Map<Integer, Block> coordsBlockMap;
+    public Map<Integer, Block> coordsBlockMap;
 
     public Chunk(Map<String, Block> blockMap, int chunkX, int chunkY) {
         this.blockMap = blockMap;
@@ -38,51 +39,27 @@ public class Chunk {
         chunkY = startY / sizeX;
         for (int i = startI; i < startI + sizeX; i++) {
             for (int j = startY; j < startY + sizeX; j++) {
-                for (int k = 0; k < sizeZ; k++) {
-                    float perlin_official = (float) NoisePerlin.noise(0.08 * i, 0.05 * j) * 12 * Block.side_size;
-                    Block block = new Block(Block.side_size * i, perlin_official - (perlin_official % Block.side_size), Block.side_size * j,
-                            (int) Block.side_size, 10, Main.BLOCK_TYPES[1], blockModel);
-                    bMap[i][(int) ((perlin_official - (perlin_official % Block.side_size)) / Block.side_size)][k] = block;
+                float perlin_official = (float) (NoisePerlin.noise(0.08 * i, 0.05 * j) + 1) * 12 * Block.side_size;
+                int yCoord = (int) ((perlin_official - (perlin_official % Block.side_size)) / Block.side_size);
+                if (yCoord > Main.MAX_HEIGHT) yCoord = Main.MAX_HEIGHT;
+                for (int k = yCoord; k >= 0; k--) {
+                    Block block = new Block(Block.side_size * i,
+                            (yCoord - k) * Block.side_size,
+                            Block.side_size * j, (int) Block.side_size, 10, Main.BLOCK_TYPES[1], blockModel);
+                    bMap[i][yCoord][k] = block;
+                    blockMap.put(Main.ID, block);
+                    Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + k;
+                }
+                for (int k = yCoord; k < Main.MAX_HEIGHT; k++) {
+                    Block block = new Block(Block.side_size * i,
+                            (yCoord - k) * Block.side_size,
+                            Block.side_size * j, (int) Block.side_size, 10, Main.BLOCK_TYPES[0], blockModel);
+                    bMap[i][yCoord][k] = block;
                     blockMap.put(Main.ID, block);
                     Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + k;
                 }
             }
         }
-
-        int counterX = 0, counterY = 0, counterZ = 0;
-        Model voidModel = new Model();
-        chunkX = startI / sizeX;
-        chunkY = startY / sizeX;
-        OpenSimplexNoise noise = new OpenSimplexNoise();
-        for (int i = startI; i < startI + sizeX; i++) {
-            for (int j = startY; j < startY + sizeX; j++) {
-                float noise_result = (float) (noise.eval(0.03 * i, 0.05 * j) * 12 * Block.side_size); // OPENSIMPLEX NOISE
-                float perlin_unofficial = (float) (Noise.noise(0.03 * i, 0.05 * j, 0.05 * (i + j)) * 12 * Block.side_size); // НЕОФИЦИАЛЬНАЯ РЕАЛИЗАЦИЯ ШУМА ПЕРЛИНА
-                float perlin_official = (float) NoisePerlin.noise(0.08 * i, 0.05 * j) * 12 * Block.side_size; // ОФИЦИАЛЬНАЯ РЕАЛИЗАЦИЯ ШУМА ПЕРЛИНА
-                System.out.println(perlin_official);
-                Block block = new Block(Block.side_size * i, perlin_official - (perlin_official % Block.side_size), Block.side_size * j,
-                        (int) Block.side_size, 10, Main.BLOCK_TYPES[1], blockModel);
-                blockMap.put(Main.ID, block);
-                coordsBlockMap.put(Math.abs((int) Block.side_size * ((int) (Block.side_size / ((perlin_official - (perlin_official % Block.side_size)) + 1)))), block);
-                Main.ID = chunkX + "" + chunkY + "" + counterX + "" + counterY + "" + counterZ;
-                counterX++;
-                for (int k = -sizeZ; k < sizeZ; k++) {
-                    if (k * Block.side_size < block.y) {
-                        blockMap.put(Main.ID, createBlock(i, j, k, perlin_official, 1, 0, Main.BLOCK_TYPES[1], voidModel));
-                    } else if (k * Block.side_size > block.y && k * Block.side_size > Main.MIN_HEIGHT / Block.side_size) {
-                        blockMap.put(Main.ID, createBlock(i, j, k, perlin_official, -1, 0, Main.BLOCK_TYPES[0], blockModel));
-                    }
-                    Main.ID = chunkX + "" + chunkY + "" + counterX + "" + counterY + "" + counterZ;
-                    counterY++;
-                }
-            }
-            counterZ++;
-        }
-    }
-
-    public Block createBlock(int i, int j, int k, float noise_result, int mult, int health, String type, Model blockModel) {
-        return new Block(Block.side_size * i, noise_result - (noise_result % Block.side_size)
-                + k * Block.side_size * mult, Block.side_size * j, (int) Block.side_size, health, type, blockModel);
     }
 
     public void drawBlocks(ModelBatch modelBatch, Environment environment) {

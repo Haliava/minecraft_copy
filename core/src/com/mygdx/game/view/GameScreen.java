@@ -26,8 +26,6 @@ import com.badlogic.gdx.graphics.Texture;
 import java.util.ArrayList;
 
 public class GameScreen implements Screen {
-    int map_width;
-    int map_length;
     ArrayList<int[]> toRender = new ArrayList<>();
     Vector3 temp = new Vector3();
     PerspectiveCamera camera;
@@ -55,15 +53,17 @@ public class GameScreen implements Screen {
         builder = new ModelBuilder();
         cube = Block.createModel(builder);
 
+        Main.WORLD_MAP.initialiseBlockMap();
         for (int i = 0; i < Main.MAP_WIDTH; i++) {
-            for (int j = 0; j < Main.MAP_LENGTH; j++) {
-                Chunk currentChunk = new Chunk(Chunk.sizeX * i, Chunk.sizeX * j, Main.WORLD_MAP, cube);
+            for (int j = 0; j < Main.MAP_WIDTH; j++) {
+                Chunk currentChunk = new Chunk(Chunk.sizeX * i, Chunk.sizeX * j, Main.WORLD_MAP.blockMap, cube);
                 Main.WORLD_MAP.add_chunk(currentChunk);
             }
         }
+        //Main.WORLD_MAP.printSelf();
 
         playerModel = Player.createModel(4f, 8f, 12f, builder);
-        player = new Player(5 * Block.side_size, 5 * Block.side_size, 5 * Block.side_size,
+        player = new Player(5 * Block.side_size, (Main.MIN_HEIGHT + 10) * Block.side_size, 5 * Block.side_size,
                 new int[]{(int) Block.side_size, (int) Block.side_size * 2}, 10f, playerModel);
 
         environment = new Environment();
@@ -86,7 +86,6 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(135 / 255f, 206 / 255f, 235 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         camera.position.set(player.x, player.y, player.z);
-        camera.position.add(temp.set(camera.direction).scl(Main.ROTATION_ANGLE));
         camera.update();
 
         player.getChunkCoords();

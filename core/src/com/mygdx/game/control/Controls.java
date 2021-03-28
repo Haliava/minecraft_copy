@@ -58,15 +58,6 @@ public class Controls {
     }
 
     public void control(float x, float y, float z) {
-        /*if (z == 0) stickBounds.setPosition(x, y);
-        float deltaX = circleBounds.x - stickBounds.x;
-        float deltaZ = circleBounds.y - stickBounds.y;
-        float distance = getDistance(deltaX, deltaZ);
-        if (z != 0 && !isJumping) {
-            direction.set(0, z, 0);
-        }
-        else if (distance == 0) direction.set(0, 0, 0);
-        else direction.set(-(deltaX / distance), z, -(deltaZ / distance));*/
         if (z == 0) stickBounds.setPosition(x, y);
         float deltaX = circleBounds.x - stickBounds.x;
         float deltaZ = circleBounds.y - stickBounds.y;
@@ -75,15 +66,7 @@ public class Controls {
             direction.set(0, z, 0);
         } else if (distance == 0) direction.set(0, 0 ,0);
         else {
-            /*direction.rotate(new Vector3(), (float) Math.toDegrees(Math.cos(
-                    (direction.x * camera.direction.x + direction.y * camera.direction.y + direction.z * camera.direction.z) /
-                            (Math.sqrt(direction.x * direction.x + direction.y * direction.y + direction.z * direction.z) *
-                                    Math.sqrt(camera.direction.x * camera.direction.x + camera.direction.y * camera.direction.y + camera.direction.z * camera.direction.z))
-            )));*/
-            int multX = camera.direction.x >= 0 ? 1: -1;
-            int multY = camera.direction.y >= 0 ? 1: -1;
-            int multZ = camera.direction.z >= 0 ? 1: -1;
-            direction.set((deltaX / distance) * multX, z, (deltaZ / distance) * multZ);
+            direction.set((((deltaX * camera.direction.z - deltaZ * camera.direction.x) / distance)), z, (((deltaX * camera.direction.x + deltaZ * camera.direction.z) / distance)));
         }
     }
 
