@@ -86,6 +86,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(135 / 255f, 206 / 255f, 235 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         camera.position.set(player.x, player.y, player.z);
+        camera.position.add(temp.set(camera.direction).scl(Main.ROTATION_ANGLE));
         camera.update();
 
         player.getChunkCoords();
