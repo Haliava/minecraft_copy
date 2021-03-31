@@ -60,10 +60,9 @@ public class GameScreen implements Screen {
                 Main.WORLD_MAP.add_chunk(currentChunk);
             }
         }
-        //Main.WORLD_MAP.printSelf();
 
-        playerModel = Player.createModel(4f, 8f, 12f, builder);
-        player = new Player(5 * Block.side_size, (Main.MIN_HEIGHT + 20) * Block.side_size, 5 * Block.side_size,
+        playerModel = Player.createModel(0f, 0f, 0f, builder);
+        player = new Player(10 * Block.side_size, (Main.MIN_HEIGHT + 15) * Block.side_size, 10 * Block.side_size,
                 new int[]{(int) Block.side_size, (int) Block.side_size * 2}, 10f, playerModel);
 
         environment = new Environment();
@@ -86,7 +85,6 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(135 / 255f, 206 / 255f, 235 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         camera.position.set(player.x, player.y, player.z);
-        camera.position.add(temp.set(camera.direction).scl(Main.ROTATION_ANGLE));
         camera.update();
 
         player.getChunkCoords();

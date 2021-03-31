@@ -43,7 +43,6 @@ public class Player extends GameObject {
     }
 
     public void update(Controls controls, float dTime) {
-        getChunkCoords();
         if (controls.direction.x != Math.sqrt(-1) && controls.direction.z != Math.sqrt(-1)) {
             velocityX = controls.direction.x * Main.MAX_VELOCITY;
             velocityZ = controls.direction.z * Main.MAX_VELOCITY;
@@ -57,11 +56,12 @@ public class Player extends GameObject {
             y += velocityY;
         }
         try {
-            String type = Main.WORLD_MAP.blockMap[(int) (x / Block.side_size)][(int) (y / Block.side_size) - 1][(int) (z / Block.side_size)].type;
-            //System.out.println((int) (x / Block.side_size) + ", " + (int) ((y / Block.side_size) - 2) + ", " + ((int) (z / Block.side_size)) + "\n");
-            if (type != "air" && velocityY >= 0) {
+            String type = Main.WORLD_MAP.blockMap[(int) (x / Block.side_size)][(int) (Math.floor(y / Block.side_size)) + 1][(int) (z / Block.side_size)].type;
+            //System.out.println((int) (x / Block.side_size) + ", " + (int) ((y / Block.side_size)) + ", " + ((int) (z / Block.side_size)) + "\n");
+            if (type != "air" || (int) (y / Block.side_size) <= 1)
                 accumulatedGravity = 0;
-            } else accumulatedGravity += Main.GRAVITY * dTime;
+            else
+                accumulatedGravity += Main.GRAVITY * dTime;
         } catch (Exception e) {
             //System.out.println("ERROR" + e);
             accumulatedGravity += Main.GRAVITY * dTime;

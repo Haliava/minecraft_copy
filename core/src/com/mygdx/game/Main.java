@@ -23,7 +23,6 @@ public class Main extends Game {
 	public static int WIDTH = 2200;
 	public static int HEIGHT = 1080;
 	public static float MAX_VELOCITY = Block.side_size / 7;
-	public static float ROTATION_ANGLE = 10f;
 	public static String ID = "00000";
 	public static String[] BLOCK_TYPES = new String[] {
 			"air", "grass", "dirt", "stone", "cobblestone", "bedrock"
