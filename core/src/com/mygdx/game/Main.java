@@ -14,23 +14,22 @@ import com.mygdx.game.view.GameScreen;
 
 public class Main extends Game {
 	Screen gameScreen;
-	public static int MAP_WIDTH = 2;
-	public static int MAP_LENGTH = 2;
-	public static Map WORLD_MAP = new Map(MAP_WIDTH, MAP_LENGTH);
-	public static int RENDER_DISTANCE = 2;
-	public static int GRAVITY = 0; //15
-	public static int MAX_HEIGHT = 10;
-	public static int MIN_HEIGHT = -5;
+	public static int MAP_WIDTH = 1;
+	public static int MAP_LENGTH = 1;
+	public static int RENDER_DISTANCE = 1;
+	public static int GRAVITY = 9; //15
+	public static int MAX_HEIGHT = 20;
+	public static int MIN_HEIGHT = 0;
 	public static int WIDTH = 2200;
 	public static int HEIGHT = 1080;
-	public static float MAX_VELOCITY = Block.side_size / 5;
+	public static float MAX_VELOCITY = Block.side_size / 7;
 	public static float ROTATION_ANGLE = 10f;
 	public static String ID = "00000";
-	public static int BLOCK_TYPES_LEN = 6;
 	public static String[] BLOCK_TYPES = new String[] {
 			"air", "grass", "dirt", "stone", "cobblestone", "bedrock"
 	};
 	public static TextureAtlas atlas;
+	public static Map WORLD_MAP = new Map(MAP_WIDTH, MAP_LENGTH);
 
 	@Override
 	public void create() {

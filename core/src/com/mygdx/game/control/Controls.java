@@ -66,7 +66,8 @@ public class Controls {
             direction.set(0, z, 0);
         } else if (distance == 0) direction.set(0, 0 ,0);
         else {
-            direction.set((((deltaX * camera.direction.z - deltaZ * camera.direction.x) / distance)), z, (((deltaX * camera.direction.x + deltaZ * camera.direction.z) / distance)));
+            direction.set(((deltaX / distance) * camera.direction.z - (deltaZ / distance) * camera.direction.x),
+                    z, -((deltaX / distance) * camera.direction.x + (deltaZ / distance) * camera.direction.z));
         }
     }
 

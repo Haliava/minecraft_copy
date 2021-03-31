@@ -53,7 +53,7 @@ public class Chunk {
                 for (int k = yCoord; k < Main.MAX_HEIGHT; k++) {
                     Block block = new Block(Block.side_size * i,
                             (yCoord - k) * Block.side_size,
-                            Block.side_size * j, (int) Block.side_size, 10, Main.BLOCK_TYPES[0], blockModel);
+                            Block.side_size * j, (int) Block.side_size, 0, Main.BLOCK_TYPES[0], blockModel);
                     bMap[i][yCoord][k] = block;
                     blockMap.put(Main.ID, block);
                     Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + k;

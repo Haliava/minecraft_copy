@@ -63,7 +63,7 @@ public class GameScreen implements Screen {
         //Main.WORLD_MAP.printSelf();
 
         playerModel = Player.createModel(4f, 8f, 12f, builder);
-        player = new Player(5 * Block.side_size, (Main.MIN_HEIGHT + 10) * Block.side_size, 5 * Block.side_size,
+        player = new Player(5 * Block.side_size, (Main.MIN_HEIGHT + 20) * Block.side_size, 5 * Block.side_size,
                 new int[]{(int) Block.side_size, (int) Block.side_size * 2}, 10f, playerModel);
 
         environment = new Environment();
@@ -99,7 +99,7 @@ public class GameScreen implements Screen {
             } catch (ArrayIndexOutOfBoundsException ignored) { }
         }
         modelBatch.render(player, environment);
-        player.update(controls, delta, Main.WORLD_MAP);
+        player.update(controls, delta);
         modelBatch.end();
         spriteBatch.begin();
         controls.draw(spriteBatch);

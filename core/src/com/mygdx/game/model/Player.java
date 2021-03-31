@@ -42,23 +42,24 @@ public class Player extends GameObject {
                 VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
     }
 
-    public void update(Controls controls, float dTime, Map map) {
+    public void update(Controls controls, float dTime) {
         getChunkCoords();
         if (controls.direction.x != Math.sqrt(-1) && controls.direction.z != Math.sqrt(-1)) {
             velocityX = controls.direction.x * Main.MAX_VELOCITY;
             velocityZ = controls.direction.z * Main.MAX_VELOCITY;
             velocityY = controls.direction.y;
+            /*if (Main.WORLD_MAP.blockMap[(int) (x / Block.side_size) - 1][(int) (y / Block.side_size)][(int) (z / Block.side_size)].type == "air" ||
+                    Main.WORLD_MAP.blockMap[(int) (x / Block.side_size) + 1][(int) (y / Block.side_size)][(int) (z / Block.side_size)].type == "air") velocityX = 0;
+            if (Main.WORLD_MAP.blockMap[(int) (x / Block.side_size)][(int) (y / Block.side_size)][(int) (z / Block.side_size) - 1].type == "air" ||
+                    Main.WORLD_MAP.blockMap[(int) (x / Block.side_size)][(int) (y / Block.side_size)][(int) (z / Block.side_size) + 1].type == "air") velocityZ = 0;*/
             x += velocityX;
             z += velocityZ;
             y += velocityY;
-            //System.out.println("\n" + "x:" + x + "\n" + "y:" + y + "\n" + "z:" + z);
-            //System.out.println(y);
         }
         try {
-            String type = Main.WORLD_MAP.blockMap[(int) (x / Block.side_size)][(int) (y / Block.side_size) - 2][(int) (z / Block.side_size)].type;
+            String type = Main.WORLD_MAP.blockMap[(int) (x / Block.side_size)][(int) (y / Block.side_size) - 1][(int) (z / Block.side_size)].type;
             //System.out.println((int) (x / Block.side_size) + ", " + (int) ((y / Block.side_size) - 2) + ", " + ((int) (z / Block.side_size)) + "\n");
-            if (!map.get_chunk(currentChunkCoordX, currentChunkCoordY).
-                    getBlockByYCoord((int) Block.side_size * ((int) (y / Block.side_size) + 1)).type.equals("air") && velocityY >= 0) {
+            if (type != "air" && velocityY >= 0) {
                 accumulatedGravity = 0;
             } else accumulatedGravity += Main.GRAVITY * dTime;
         } catch (Exception e) {
