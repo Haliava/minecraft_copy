@@ -14,8 +14,9 @@ import com.mygdx.game.control.Controls;
 public class Player extends GameObject {
     Inventory inventory;
     public float velocityX, velocityY, velocityZ;
+    public int coordX, coordY, coordZ;
     public int currentChunkCoordX, currentChunkCoordY;
-    float accumulatedGravity;
+    public float accumulatedGravity;
 
     public Player(float x, float y, float z, int[] size, float health, Model model) {
         super(x, y, z, size, health, model);
@@ -25,6 +26,9 @@ public class Player extends GameObject {
         velocityX = 0;
         velocityY = 0;
         velocityZ = 0;
+        coordX = 0;
+        coordY = 0;
+        coordZ = 0;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -36,6 +40,12 @@ public class Player extends GameObject {
         return new int[] {currentChunkCoordX, currentChunkCoordY};
     }
 
+    public void update_postition() {
+        coordX = (int) ((x + Block.side_size / 2) / Block.side_size);
+        coordY = (int) ((y - Block.side_size / 2) / Block.side_size) - 1;
+        coordZ = (int) ((z + Block.side_size / 2) / Block.side_size);
+    }
+
     public static Model createModel(float w, float h, float d, ModelBuilder modelBuilder) {
         return modelBuilder.createCone(w, h, d, 3,
                 new Material(ColorAttribute.createDiffuse(Color.BLUE)),
@@ -43,21 +53,25 @@ public class Player extends GameObject {
     }
 
     public void update(Controls controls, float dTime) {
+        update_postition();
         if (controls.direction.x != Math.sqrt(-1) && controls.direction.z != Math.sqrt(-1)) {
             velocityX = controls.direction.x * Main.MAX_VELOCITY;
             velocityZ = controls.direction.z * Main.MAX_VELOCITY;
             velocityY = controls.direction.y;
-            /*if (Main.WORLD_MAP.blockMap[(int) (x / Block.side_size) - 1][(int) (y / Block.side_size)][(int) (z / Block.side_size)].type == "air" ||
-                    Main.WORLD_MAP.blockMap[(int) (x / Block.side_size) + 1][(int) (y / Block.side_size)][(int) (z / Block.side_size)].type == "air") velocityX = 0;
-            if (Main.WORLD_MAP.blockMap[(int) (x / Block.side_size)][(int) (y / Block.side_size)][(int) (z / Block.side_size) - 1].type == "air" ||
-                    Main.WORLD_MAP.blockMap[(int) (x / Block.side_size)][(int) (y / Block.side_size)][(int) (z / Block.side_size) + 1].type == "air") velocityZ = 0;*/
+            /*try {
+                if (Main.WORLD_MAP.blockMap[coordX - 1][coordY][coordZ].type != "air" ||
+                        Main.WORLD_MAP.blockMap[coordX + 1][coordY][coordZ].type != "air") velocityX = 0;
+                if (Main.WORLD_MAP.blockMap[coordX][coordY - 1][coordZ].type != "air" ||
+                        Main.WORLD_MAP.blockMap[coordX][coordY + 1][coordZ].type != "air") velocityZ = 0;
+            } catch (Exception ignored) {}*/
+
             x += velocityX;
             z += velocityZ;
             y += velocityY;
         }
         try {
-            String type = Main.WORLD_MAP.blockMap[(int) (x / Block.side_size)][(int) (Math.floor(y / Block.side_size)) + 1][(int) (z / Block.side_size)].type;
-            //System.out.println((int) (x / Block.side_size) + ", " + (int) ((y / Block.side_size)) + ", " + ((int) (z / Block.side_size)) + "\n");
+            String type = Main.WORLD_MAP.blockMap[coordX][coordY][coordZ].type;
+            System.out.println(coordX + ", " + coordY + ", " + coordZ+ "\n");
             if (type != "air" || (int) (y / Block.side_size) <= 1)
                 accumulatedGravity = 0;
             else

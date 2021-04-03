@@ -4,10 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
@@ -22,12 +24,14 @@ import com.mygdx.game.model.Chunk;
 import com.mygdx.game.model.Map;
 import com.mygdx.game.model.Player;
 import com.badlogic.gdx.graphics.Texture;
+import com.mygdx.game.utils.BlocksMaterial;
 
 import java.util.ArrayList;
 
 public class GameScreen implements Screen {
     ArrayList<int[]> toRender = new ArrayList<>();
-    Vector3 temp = new Vector3();
+    Model debugCube;
+    ModelInstance debugInst;
     PerspectiveCamera camera;
     ModelBatch modelBatch;
     SpriteBatch spriteBatch;
@@ -52,6 +56,9 @@ public class GameScreen implements Screen {
         spriteBatch = new SpriteBatch();
         builder = new ModelBuilder();
         cube = Block.createModel(builder);
+        debugCube = builder.createBox(Block.side_size, Block.side_size, Block.side_size, BlocksMaterial.listOfMaterials[3],
+                (VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal|VertexAttributes.Usage.TextureCoordinates));
+        debugInst = new ModelInstance(debugCube, 10 * Block.side_size, (Main.MIN_HEIGHT + 15) * Block.side_size, 10 * Block.side_size);
 
         Main.WORLD_MAP.initialiseBlockMap();
         for (int i = 0; i < Main.MAP_WIDTH; i++) {
@@ -84,7 +91,8 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(135 / 255f, 206 / 255f, 235 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
-        camera.position.set(player.x, player.y, player.z);
+        camera.position.set(player.x, player.y - Block.side_size, player.z);
+        debugInst.transform.translate(player.velocityX, player.velocityY, player.velocityZ);
         camera.update();
 
         player.getChunkCoords();
@@ -97,6 +105,7 @@ public class GameScreen implements Screen {
             } catch (ArrayIndexOutOfBoundsException ignored) { }
         }
         modelBatch.render(player, environment);
+        modelBatch.render(debugInst, environment);
         player.update(controls, delta);
         modelBatch.end();
         spriteBatch.begin();
