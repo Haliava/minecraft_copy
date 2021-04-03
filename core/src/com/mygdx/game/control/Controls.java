@@ -8,7 +8,9 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.Ray;
 import com.mygdx.game.Main;
+import com.mygdx.game.model.Block;
 import com.mygdx.game.model.Player;
 
 
@@ -17,6 +19,7 @@ public class Controls {
     Texture circleImg, stickImg, jumpImg;
     Circle circleBounds, stickBounds, jumpBounds;
     Vector2 initialStickCords;
+    Vector3 touchedBlock;
     Camera camera;
     float circleR, stickR;
     int fingerNumber = -1;
@@ -33,6 +36,7 @@ public class Controls {
         this.circleBounds = new Circle(vector2, this.circleR);
         this.stickBounds = new Circle(vector2, this.stickR);
         this.jumpBounds = new Circle(jumpCoords, this.stickR);
+        this.touchedBlock = new Vector3(0, 0, 0);
         this.camera = camera;
         direction = new Vector3(0, 0,0);
     }
@@ -55,6 +59,16 @@ public class Controls {
             control(initialStickCords.x, initialStickCords.y, 0);
             fingerNumber = -1;
         }
+    }
+
+    public void getCameraRay(float x, float y) {
+        Ray ray = camera.getPickRay(x, y);
+        touchedBlock = ray.getEndPoint(new Vector3(0, 0, 0), Main.REACH);
+        touchedBlock.x /= Block.side_size;
+        touchedBlock.y /= Block.side_size;
+        touchedBlock.z /= Block.side_size;
+        System.out.println(touchedBlock);
+        Main.WORLD_MAP.blockMap[(int) touchedBlock.x][(int) touchedBlock.y][(int) touchedBlock.z].type = "air";
     }
 
     public void control(float x, float y, float z) {

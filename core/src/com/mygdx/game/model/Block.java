@@ -20,7 +20,7 @@ import java.util.Spliterators;
 
 public class Block extends GameObject {
     public static float side_size = 5f;
-    String type;
+    public String type;
 
     public Block(float x, float y, float z, int size, float health, String type, Model model) {
         super(x, y, z, size, health, model);

@@ -14,6 +14,7 @@ import com.mygdx.game.view.GameScreen;
 
 public class Main extends Game {
 	Screen gameScreen;
+	public static int REACH = 3;
 	public static int MAP_WIDTH = 1;
 	public static int MAP_LENGTH = 1;
 	public static int RENDER_DISTANCE = 1;

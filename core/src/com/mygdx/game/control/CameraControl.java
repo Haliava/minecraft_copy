@@ -29,7 +29,7 @@ public class CameraControl extends CameraInputController implements InputProcess
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (!(controls.isInsideControls(screenX, screenY, controls.circleBounds)))
             super.touchDown(screenX, screenY, pointer, button);
-        multitouch(screenX, Main.HEIGHT - screenY, true, pointer);
+            controls.getCameraRay(screenX, screenY);
         return false;
     }
 
