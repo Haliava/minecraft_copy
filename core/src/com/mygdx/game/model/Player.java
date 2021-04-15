@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Main;
 import com.mygdx.game.control.Controls;
+import com.mygdx.game.control.HotbarSquare;
 
 public class Player extends GameObject {
     Inventory inventory;
@@ -46,9 +47,9 @@ public class Player extends GameObject {
     }
 
     public void update_postition() {
-        coordX = (int) ((x + Block.side_size / 2) / Block.side_size);
-        coordY = (int) ((y - Block.side_size / 2) / Block.side_size) - 1;
-        coordZ = (int) ((z + Block.side_size / 2) / Block.side_size);
+        coordX = (int) (x / Block.side_size);
+        coordY = (int) ((y - Block.side_size) / Block.side_size) - 1;
+        coordZ = (int) (z / Block.side_size);
     }
 
     public static Model createModel(float w, float h, float d, ModelBuilder modelBuilder) {
@@ -61,7 +62,7 @@ public class Player extends GameObject {
         if (controls.direction.x != Math.sqrt(-1) && controls.direction.z != Math.sqrt(-1)) {
             velocityX = controls.direction.x * Main.MAX_VELOCITY;
             velocityZ = controls.direction.z * Main.MAX_VELOCITY;
-            velocityY = controls.direction.y * Main.MAX_VELOCITY;
+            velocityY = (float) (controls.direction.y * 2);
             if (velocityX != 0 && velocityY != 0 && velocityZ != 0) isMoving = true;
 
             try {

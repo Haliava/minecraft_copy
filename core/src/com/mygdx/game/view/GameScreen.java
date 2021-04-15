@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -15,34 +16,36 @@ import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Main;
 import com.mygdx.game.control.CameraControl;
 import com.mygdx.game.control.Controls;
+import com.mygdx.game.control.Hotbar;
+import com.mygdx.game.control.HotbarSquare;
 import com.mygdx.game.model.Block;
 import com.mygdx.game.model.Chunk;
-import com.mygdx.game.model.Map;
 import com.mygdx.game.model.Player;
 import com.badlogic.gdx.graphics.Texture;
 import com.mygdx.game.utils.BlocksMaterial;
+import com.mygdx.game.utils.Material2D;
 
 import java.util.ArrayList;
 
 public class GameScreen implements Screen {
+    public Hotbar hotbar;
+    public PerspectiveCamera camera;
+    public Player player;
+    public Controls controls;
     ArrayList<int[]> toRender = new ArrayList<>();
     Model debugCube;
     ModelInstance debugInst;
-    PerspectiveCamera camera;
     ModelBatch modelBatch;
     SpriteBatch spriteBatch;
     ModelBuilder builder;
     Model cube;
     Model playerModel;
-    Player player;
     Environment environment;
     CameraInputController cameraInputController;
     CameraControl cameraControl;
-    Controls controls;
     Texture outerCircle, innerCircle, jumpCircle;
 
     @Override
@@ -81,7 +84,13 @@ public class GameScreen implements Screen {
         jumpCircle = new Texture("inner.png");
         controls = new Controls(outerCircle, innerCircle, jumpCircle, new Vector2(300, 300), Main.HEIGHT / 3, camera);
 
-        cameraControl = new CameraControl(camera, player, controls);
+        hotbar = new Hotbar();
+        for (int i = 0; i < 9; i++) {
+            TextureRegion tmpRegion = Main.hotbar_atlas.findRegion("square" + (i + 1));
+            hotbar.setSquare(i, new HotbarSquare(tmpRegion));
+        }
+
+        cameraControl = new CameraControl(this);
         cameraInputController = new CameraInputController(camera);
         //Gdx.input.setInputProcessor(cameraInputController);
         Gdx.input.setInputProcessor(cameraControl);
@@ -109,6 +118,9 @@ public class GameScreen implements Screen {
         player.update(controls, delta);
         modelBatch.end();
         spriteBatch.begin();
+        for (int i = 0; i < 9; i++)
+            spriteBatch.draw(Material2D.hotbar_squares[i], Main.WIDTH / 3 + Material2D.TEXTURE_2D_SIZE * i, 100);
+        spriteBatch.draw(Main.selectedSquareTexture, Main.selectedSquareX, 100);
         controls.draw(spriteBatch);
         spriteBatch.end();
     }

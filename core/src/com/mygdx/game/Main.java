@@ -3,6 +3,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.math.Rectangle;
@@ -13,27 +14,32 @@ import com.mygdx.game.model.Map;
 import com.mygdx.game.view.GameScreen;
 
 public class Main extends Game {
+	public static String ID = "00000";
 	Screen gameScreen;
 	public static int REACH = 2;
-	public static int MAP_WIDTH = 1;
-	public static int MAP_LENGTH = 1;
+	public static int MAP_WIDTH = 2;
+	public static int MAP_LENGTH = 2;
 	public static int RENDER_DISTANCE = 2;
 	public static int GRAVITY = 8; //15
 	public static int MAX_HEIGHT = 32;
 	public static int MIN_HEIGHT = 0;
 	public static int WIDTH = 2200;
 	public static int HEIGHT = 1080;
-	public static float MAX_VELOCITY = Block.side_size / 7;
-	public static String ID = "00000";
+	public static float MAX_VELOCITY = Block.side_size / 15;
 	public static String[] BLOCK_TYPES = new String[] {
 			"air", "grass", "dirt", "stone", "cobblestone", "bedrock"
 	};
 	public static TextureAtlas atlas;
+	public static TextureAtlas hotbar_atlas;
 	public static Map WORLD_MAP = new Map(MAP_WIDTH, MAP_LENGTH);
+	public static Texture selectedSquareTexture;
+	public static int selectedSquareX = Main.WIDTH / 3;
 
 	@Override
 	public void create() {
 		atlas = new TextureAtlas(Gdx.files.internal("texture_atlas/atlas.atlas"));
+		hotbar_atlas = new TextureAtlas(Gdx.files.internal("hotbar/hotbar.atlas"));
+		selectedSquareTexture = new Texture("selected_hotbar_square.png");
 		gameScreen = new GameScreen();
 		setScreen(gameScreen);
 	}

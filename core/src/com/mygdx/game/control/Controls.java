@@ -63,19 +63,6 @@ public class Controls {
         }
     }
 
-    public void getCameraRay(float x, float y, boolean toBuild) {
-        Ray ray = camera.getPickRay(x, y);
-        touchedBlock = ray.getEndPoint(camera.direction.cpy(), Main.REACH * Block.side_size);
-        touchedBlock.x /= Block.side_size;
-        touchedBlock.y /= Block.side_size;
-        touchedBlock.z /= Block.side_size;
-        try {
-            if (toBuild) {
-                Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = Main.BLOCK_TYPES[2];
-            } else Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = "air";
-        } catch (ArrayIndexOutOfBoundsException ignored) {}
-    }
-
     public void control(float x, float y, float z) {
         if (z == 0) stickBounds.setPosition(x, y);
         float deltaX = circleBounds.x - stickBounds.x;
@@ -88,6 +75,19 @@ public class Controls {
             direction.set(((deltaX / distance) * camera.direction.z - (deltaZ / distance) * camera.direction.x),
                     z, -((deltaX / distance) * camera.direction.x + (deltaZ / distance) * camera.direction.z));
         }
+    }
+
+    public void getCameraRay(float x, float y, boolean toBuild) {
+        Ray ray = camera.getPickRay(x, y);
+        touchedBlock = ray.getEndPoint(camera.direction.cpy(), Main.REACH * Block.side_size);
+        touchedBlock.x /= Block.side_size;
+        touchedBlock.y /= Block.side_size;
+        touchedBlock.z /= Block.side_size;
+        try {
+            if (toBuild) {
+                Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = Main.BLOCK_TYPES[2];
+            } else Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = "air";
+        } catch (ArrayIndexOutOfBoundsException ignored) {}
     }
 
     public float getDistance(float dx, float dy) { return (float) Math.sqrt(dx * dx + dy * dy); }

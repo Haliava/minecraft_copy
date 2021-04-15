@@ -74,10 +74,6 @@ public class Chunk {
             block.draw(modelBatch, environment);
     }
 
-    public Block getBlock(String ID) {
-        return blockMap.get(ID);
-    }
-
     public Block getBlockByYCoord(int y) {
         return coordsBlockMap.get(y);
     }
