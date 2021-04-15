@@ -42,19 +42,26 @@ public class Chunk {
                 float perlin_official = (float) (NoisePerlin.noise(0.08 * i, 0.05 * j) + 1) * 12 * Block.side_size;
                 int yCoord = (int) ((perlin_official - (perlin_official % Block.side_size)) / Block.side_size);
                 if (yCoord > Main.MAX_HEIGHT) yCoord = Main.MAX_HEIGHT;
-                for (int k = yCoord; k >= 0; k--) {
-                    Block block = new Block(Block.side_size * i,
+                Block block = new Block(Block.side_size * i,
+                        yCoord * Block.side_size,
+                        Block.side_size * j, (int) Block.side_size, 10, Main.BLOCK_TYPES[1], blockModel);
+                bMap[i][yCoord][j] = block;
+                blockMap.put(Main.ID, block);
+                Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + yCoord;
+                for (int k = yCoord - 1; k >= 0; k--) {
+                    block = new Block(Block.side_size * i,
                             (yCoord - k) * Block.side_size,
                             Block.side_size * j, (int) Block.side_size, 10, Main.BLOCK_TYPES[1], blockModel);
-                    bMap[i][yCoord][k] = block;
+                    if (k != yCoord - 2) block.isVisible = false;
+                    bMap[i][k][j] = block;
                     blockMap.put(Main.ID, block);
                     Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + k;
                 }
-                for (int k = yCoord; k < Main.MAX_HEIGHT; k++) {
-                    Block block = new Block(Block.side_size * i,
+                for (int k = yCoord + 1; k < Main.MAX_HEIGHT; k++) {
+                    block = new Block(Block.side_size * i,
                             (yCoord - k) * Block.side_size,
                             Block.side_size * j, (int) Block.side_size, 0, Main.BLOCK_TYPES[0], blockModel);
-                    bMap[i][yCoord][k] = block;
+                    bMap[i][k][j] = block;
                     blockMap.put(Main.ID, block);
                     Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + k;
                 }

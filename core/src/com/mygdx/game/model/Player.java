@@ -13,8 +13,10 @@ import com.mygdx.game.control.Controls;
 
 public class Player extends GameObject {
     Inventory inventory;
+    public boolean isMoving;
     public float velocityX, velocityY, velocityZ;
     public int coordX, coordY, coordZ;
+    public int flaggedX, flaggedZ;
     public int currentChunkCoordX, currentChunkCoordY;
     public float accumulatedGravity;
 
@@ -26,9 +28,12 @@ public class Player extends GameObject {
         velocityX = 0;
         velocityY = 0;
         velocityZ = 0;
+        isMoving = false;
         coordX = 0;
         coordY = 0;
         coordZ = 0;
+        flaggedX = 0;
+        flaggedZ = 0;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -53,33 +58,33 @@ public class Player extends GameObject {
     }
 
     public void update(Controls controls, float dTime) {
-        update_postition();
         if (controls.direction.x != Math.sqrt(-1) && controls.direction.z != Math.sqrt(-1)) {
             velocityX = controls.direction.x * Main.MAX_VELOCITY;
             velocityZ = controls.direction.z * Main.MAX_VELOCITY;
-            velocityY = controls.direction.y;
-            /*try {
-                if (Main.WORLD_MAP.blockMap[coordX - 1][coordY][coordZ].type != "air" ||
-                        Main.WORLD_MAP.blockMap[coordX + 1][coordY][coordZ].type != "air") velocityX = 0;
-                if (Main.WORLD_MAP.blockMap[coordX][coordY - 1][coordZ].type != "air" ||
-                        Main.WORLD_MAP.blockMap[coordX][coordY + 1][coordZ].type != "air") velocityZ = 0;
-            } catch (Exception ignored) {}*/
+            velocityY = controls.direction.y * Main.MAX_VELOCITY;
+            if (velocityX != 0 && velocityY != 0 && velocityZ != 0) isMoving = true;
+
+            try {
+                if (Main.WORLD_MAP.blockMap[coordX][coordY][coordZ].type != "air") {
+                    if (Main.WORLD_MAP.blockMap[coordX][coordY][coordZ + 1].type == "air" && controls.direction.z < 0) velocityZ = 0;
+                    else if (Main.WORLD_MAP.blockMap[coordX][coordY][coordZ - 1].type == "air" && controls.direction.z > 0) velocityZ = 0;
+                    if (Main.WORLD_MAP.blockMap[coordX + 1][coordY][coordZ].type == "air" && controls.direction.x < 0) velocityX = 0;
+                    else if (Main.WORLD_MAP.blockMap[coordX - 1][coordY][coordZ].type == "air" && controls.direction.x > 0) velocityX = 0;
+                }
+            } catch (Exception ignored) {}
 
             x += velocityX;
             z += velocityZ;
             y += velocityY;
         }
+        update_postition();
         try {
-            String type = Main.WORLD_MAP.blockMap[coordX][coordY][coordZ].type;
-            System.out.println(coordX + ", " + coordY + ", " + coordZ+ "\n");
-            if (type != "air" || (int) (y / Block.side_size) <= 1)
+            String type = Main.WORLD_MAP.blockMap[coordX][coordY - 1][coordZ].type;
+            if (type != "air" || coordY <= 1)
                 accumulatedGravity = 0;
             else
                 accumulatedGravity += Main.GRAVITY * dTime;
-        } catch (Exception e) {
-            //System.out.println("ERROR" + e);
-            accumulatedGravity += Main.GRAVITY * dTime;
-        }
+        } catch (Exception e) { }
         y -= accumulatedGravity * dTime;
     }
 

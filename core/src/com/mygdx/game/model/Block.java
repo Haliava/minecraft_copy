@@ -21,10 +21,12 @@ import java.util.Spliterators;
 public class Block extends GameObject {
     public static float side_size = 5f;
     public String type;
+    public boolean isVisible;
 
     public Block(float x, float y, float z, int size, float health, String type, Model model) {
         super(x, y, z, size, health, model);
         this.type = type;
+        isVisible = true;
     }
 
     public static Model createModel(ModelBuilder modelBuilder) {
@@ -53,7 +55,7 @@ public class Block extends GameObject {
     }
 
     public void draw(ModelBatch modelBatch, Environment environment) {
-        if (!this.type.equals("air")) modelBatch.render(this, environment);
+        if (!type.equals("air") && isVisible) modelBatch.render(this, environment);
     }
 
     public float[] getCoords() {

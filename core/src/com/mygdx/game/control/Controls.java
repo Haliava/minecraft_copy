@@ -13,6 +13,8 @@ import com.mygdx.game.Main;
 import com.mygdx.game.model.Block;
 import com.mygdx.game.model.Player;
 
+import javax.swing.text.html.HTMLDocument;
+
 
 public class Controls {
     public Vector3 direction;
@@ -61,14 +63,17 @@ public class Controls {
         }
     }
 
-    public void getCameraRay(float x, float y) {
+    public void getCameraRay(float x, float y, boolean toBuild) {
         Ray ray = camera.getPickRay(x, y);
-        touchedBlock = ray.getEndPoint(new Vector3(0, 0, 0), Main.REACH);
+        touchedBlock = ray.getEndPoint(camera.direction.cpy(), Main.REACH * Block.side_size);
         touchedBlock.x /= Block.side_size;
         touchedBlock.y /= Block.side_size;
         touchedBlock.z /= Block.side_size;
-        System.out.println(touchedBlock);
-        Main.WORLD_MAP.blockMap[(int) touchedBlock.x][(int) touchedBlock.y][(int) touchedBlock.z].type = "air";
+        try {
+            if (toBuild) {
+                Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = Main.BLOCK_TYPES[2];
+            } else Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = "air";
+        } catch (ArrayIndexOutOfBoundsException ignored) {}
     }
 
     public void control(float x, float y, float z) {
@@ -88,7 +93,7 @@ public class Controls {
     public float getDistance(float dx, float dy) { return (float) Math.sqrt(dx * dx + dy * dy); }
 
     public boolean isInsideControls(float touchX, float touchY, Circle obj) {
-        return touchX * touchX + (Main.HEIGHT - touchY * touchY) < (obj.x) * (obj.y);
+        return touchX * touchX + (Main.HEIGHT - touchY * touchY) < obj.x * obj.y;
     }
 
     public boolean isInsideJumpControls(float touchX, float touchY) {

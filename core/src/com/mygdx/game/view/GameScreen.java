@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
         cube = Block.createModel(builder);
         debugCube = builder.createBox(Block.side_size, Block.side_size, Block.side_size, BlocksMaterial.listOfMaterials[3],
                 (VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal|VertexAttributes.Usage.TextureCoordinates));
-        debugInst = new ModelInstance(debugCube, 10 * Block.side_size, (Main.MIN_HEIGHT + 15) * Block.side_size, 10 * Block.side_size);
+        debugInst = new ModelInstance(debugCube, 10 * Block.side_size, (Main.MIN_HEIGHT + 7) * Block.side_size, 10 * Block.side_size);
 
         Main.WORLD_MAP.initialiseBlockMap();
         for (int i = 0; i < Main.MAP_WIDTH; i++) {
@@ -92,7 +92,7 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(135 / 255f, 206 / 255f, 235 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         camera.position.set(player.x, player.y - Block.side_size, player.z);
-        debugInst.transform.translate(player.velocityX, player.velocityY, player.velocityZ);
+        debugInst.transform.translate(player.velocityX, 0, player.velocityZ);
         camera.update();
 
         player.getChunkCoords();

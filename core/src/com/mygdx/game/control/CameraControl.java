@@ -3,11 +3,13 @@ package com.mygdx.game.control;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
+import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.mygdx.game.Main;
 import com.mygdx.game.model.Player;
 
-public class CameraControl extends CameraInputController implements InputProcessor {
+public class CameraControl extends CameraInputController {
     Camera camera;
     Player player;
     Controls controls;
@@ -29,7 +31,7 @@ public class CameraControl extends CameraInputController implements InputProcess
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         if (!(controls.isInsideControls(screenX, screenY, controls.circleBounds)))
             super.touchDown(screenX, screenY, pointer, button);
-            controls.getCameraRay(screenX, screenY);
+            controls.getCameraRay(screenX, screenY, false);
         return false;
     }
 
