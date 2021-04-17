@@ -1,4 +1,4 @@
-package com.mygdx.game.model;
+package com.mygdx.game.utils;
 
 public final class Noise {
     static public double noise(double x, double y, double z) {

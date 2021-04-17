@@ -1,5 +1,7 @@
 package com.mygdx.game.model;
 
+import com.badlogic.gdx.graphics.Texture;
+
 import java.util.Arrays;
 
 public class Inventory extends Item2d {

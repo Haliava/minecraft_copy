@@ -26,20 +26,18 @@ public class Main extends Game {
 	public static int WIDTH = 2200;
 	public static int HEIGHT = 1080;
 	public static float MAX_VELOCITY = Block.side_size / 15;
-	public static String[] BLOCK_TYPES = new String[] {
-			"air", "grass", "dirt", "stone", "cobblestone", "bedrock"
-	};
 	public static TextureAtlas atlas;
 	public static TextureAtlas hotbar_atlas;
 	public static Map WORLD_MAP = new Map(MAP_WIDTH, MAP_LENGTH);
 	public static Texture selectedSquareTexture;
-	public static int selectedSquareX = Main.WIDTH / 3;
+	public static int selectedSquareX = (int) (Main.WIDTH / 3.3);
+	public static int selectedSquareIndex = 0;
 
 	@Override
 	public void create() {
 		atlas = new TextureAtlas(Gdx.files.internal("texture_atlas/atlas.atlas"));
 		hotbar_atlas = new TextureAtlas(Gdx.files.internal("hotbar/hotbar.atlas"));
-		selectedSquareTexture = new Texture("selected_hotbar_square.png");
+		selectedSquareTexture = new Texture("hotbar/selected_square.jpg");
 		gameScreen = new GameScreen();
 		setScreen(gameScreen);
 	}

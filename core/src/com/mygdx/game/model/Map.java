@@ -2,6 +2,7 @@ package com.mygdx.game.model;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.mygdx.game.Main;
+import com.mygdx.game.utils.BlocksMaterial;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +27,7 @@ public class Map {
             for (int j = 0; j < sizeY * Chunk.sizeX; j++)
                 for (int k = 0; k < Main.MAX_HEIGHT; k++)
                     blockMap[i][k][j] = new Block(Block.side_size * i, Block.side_size * j,
-                            Block.side_size * k, (int) Block.side_size, 0, Main.BLOCK_TYPES[0], voidModel);
+                            Block.side_size * k, (int) Block.side_size, 0, BlocksMaterial.blockTypes[0], voidModel);
     }
 
     public void add_chunk(Chunk chunk) {

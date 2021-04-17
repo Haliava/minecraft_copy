@@ -1,69 +1,69 @@
 
-hot.png
-size: 648, 72
+hotbar_100x100.jpg
+size: 900, 100
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
 square1
   rotate: false
   xy: 0, 0
-  size: 72, 72
-  orig: 72, 72
+  size: 100, 100
+  orig: 100, 100
   offset: 0, 0
   index: -1
 square2
   rotate: false
-  xy: 72, 0
-  size: 72, 72
-  orig: 72, 72
+  xy: 100, 0
+  size: 100, 100
+  orig: 100, 100
   offset: 0, 0
   index: -1
 square3
   rotate: false
-  xy: 144, 0
-  size: 72, 72
-  orig: 72, 72
+  xy: 200, 0
+  size: 100, 100
+  orig: 100, 100
   offset: 0, 0
   index: -1
 square4
   rotate: false
-  xy: 216, 0
-  size: 72, 72
-  orig: 72, 72
+  xy: 300, 0
+  size: 100, 100
+  orig: 100, 100
   offset: 0, 0
   index: -1
 square5
   rotate: false
-  xy: 288, 0
-  size: 72, 72
-  orig: 72, 72
+  xy: 400, 0
+  size: 100, 100
+  orig: 100, 100
   offset: 0, 0
   index: -1
 square6
   rotate: false
-  xy: 360, 0
-  size: 72, 72
-  orig: 72, 72
+  xy: 500, 0
+  size: 100, 100
+  orig: 100, 100
   offset: 0, 0
   index: -1
 square7
   rotate: false
-  xy: 432, 0
-  size: 72, 72
-  orig: 72, 72
+  xy: 600, 0
+  size: 100, 100
+  orig: 100, 100
   offset: 0, 0
   index: -1
 square8
   rotate: false
-  xy: 504, 0
-  size: 72, 72
-  orig: 72, 72
+  xy: 700, 0
+  size: 100, 100
+  orig: 100, 100
   offset: 0, 0
   index: -1
 square9
   rotate: false
-  xy: 576, 0
-  size: 72, 72
-  orig: 72, 72
+  xy: 800, 0
+  size: 100, 100
+  orig: 100, 100
   offset: 0, 0
   index: -1

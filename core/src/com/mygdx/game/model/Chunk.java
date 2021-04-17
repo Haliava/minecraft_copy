@@ -4,8 +4,9 @@ import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.mygdx.game.Main;
+import com.mygdx.game.utils.BlocksMaterial;
+import com.mygdx.game.utils.NoisePerlin;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,14 +45,14 @@ public class Chunk {
                 if (yCoord > Main.MAX_HEIGHT) yCoord = Main.MAX_HEIGHT;
                 Block block = new Block(Block.side_size * i,
                         yCoord * Block.side_size,
-                        Block.side_size * j, (int) Block.side_size, 10, Main.BLOCK_TYPES[1], blockModel);
+                        Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[1], blockModel);
                 bMap[i][yCoord][j] = block;
                 blockMap.put(Main.ID, block);
                 Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + yCoord;
                 for (int k = yCoord - 1; k >= 0; k--) {
                     block = new Block(Block.side_size * i,
                             (yCoord - k) * Block.side_size,
-                            Block.side_size * j, (int) Block.side_size, 10, Main.BLOCK_TYPES[1], blockModel);
+                            Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[1], blockModel);
                     if (k != yCoord - 2) block.isVisible = false;
                     bMap[i][k][j] = block;
                     blockMap.put(Main.ID, block);
@@ -60,7 +61,7 @@ public class Chunk {
                 for (int k = yCoord + 1; k < Main.MAX_HEIGHT; k++) {
                     block = new Block(Block.side_size * i,
                             (yCoord - k) * Block.side_size,
-                            Block.side_size * j, (int) Block.side_size, 0, Main.BLOCK_TYPES[0], blockModel);
+                            Block.side_size * j, (int) Block.side_size, 0, BlocksMaterial.blockTypes[0], blockModel);
                     bMap[i][k][j] = block;
                     blockMap.put(Main.ID, block);
                     Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + k;

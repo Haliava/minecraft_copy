@@ -1,4 +1,4 @@
-package com.mygdx.game.model;
+package com.mygdx.game.utils;
 
 /*
  * OpenSimplex Noise in Java.

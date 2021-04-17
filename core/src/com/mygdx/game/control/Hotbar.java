@@ -1,6 +1,7 @@
 package com.mygdx.game.control;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.Ray;
@@ -32,7 +33,7 @@ public class Hotbar {
         Main.selectedSquareX = square.x;
     }
 
-    public void setSelectedBlock(Material posessedMaterial) {
-        //this.squares[(int) Main.selectedSquareX - Main.WIDTH / 3 / 9].posessedMaterial = posessedMaterial;
+    public void setSelectedBlock(HotbarSquare square) {
+        //this.squares[1].texture = square.texture;
     }
 }

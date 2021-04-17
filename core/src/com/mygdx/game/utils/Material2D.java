@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.mygdx.game.Main;
 
 public class Material2D {
-    public static int TEXTURE_2D_SIZE = 72;
+    public static int TEXTURE_2D_SIZE = 100;
 
     public static TextureRegion[] hotbar_squares = new TextureRegion[] {
             Main.hotbar_atlas.findRegion("square1"),

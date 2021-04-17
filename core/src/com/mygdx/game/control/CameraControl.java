@@ -40,10 +40,10 @@ public class CameraControl extends CameraInputController {
         if (tmpSquare == null && !(controls.isInsideControls(screenX, screenY, controls.circleBounds)) &&
                 !(controls.isInsideJumpControls(screenX, screenY))) {
             super.touchDown(screenX, screenY, pointer, button);
-            controls.getCameraRay(screenX, screenY, false);
+            controls.getCameraRay(screenX, screenY);
         } else if (tmpSquare != null) {
             hotbar.selectHotbarSquare(tmpSquare);
-            hotbar.setSelectedBlock(tmpSquare.posessedMaterial);
+            hotbar.setSelectedBlock(tmpSquare);
         }
         return false;
     }

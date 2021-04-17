@@ -22,4 +22,16 @@ public class BlocksMaterial {
             new Material(TextureAttribute.createDiffuse(new TextureRegion(Main.atlas.findRegion("grass"), 0, TEXTURE_SIZE, TEXTURE_SIZE, TEXTURE_SIZE))), // SIDE
             new Material(TextureAttribute.createDiffuse(new TextureRegion(Main.atlas.findRegion("grass"), TEXTURE_SIZE, TEXTURE_SIZE, TEXTURE_SIZE, TEXTURE_SIZE))), // BOTTOM
     };
+
+    public static TextureRegion[] textures = new TextureRegion[] {
+            Main.atlas.findRegion("grass"),
+            Main.atlas.findRegion("dirt"),
+            Main.atlas.findRegion("stone"),
+            Main.atlas.findRegion("planks_oak"),
+            Main.atlas.findRegion("bedrock")
+    };
+
+    public static String[] blockTypes = new String[] {
+            "air", "grass", "dirt", "stone", "planks_oak", "bedrock"
+    };
 }

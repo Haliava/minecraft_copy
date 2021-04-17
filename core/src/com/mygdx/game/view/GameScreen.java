@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
@@ -118,8 +119,12 @@ public class GameScreen implements Screen {
         player.update(controls, delta);
         modelBatch.end();
         spriteBatch.begin();
-        for (int i = 0; i < 9; i++)
-            spriteBatch.draw(Material2D.hotbar_squares[i], Main.WIDTH / 3 + Material2D.TEXTURE_2D_SIZE * i, 100);
+        for (int i = 0; i < 9; i++) {
+            float x = (float) (Main.WIDTH / 3.3 + Material2D.TEXTURE_2D_SIZE * i);
+            if (x == Main.selectedSquareX) Main.selectedSquareIndex = i;
+            spriteBatch.draw(Material2D.hotbar_squares[i], x, 100);
+            hotbar.squares[i].drawInsides(spriteBatch);
+        }
         spriteBatch.draw(Main.selectedSquareTexture, Main.selectedSquareX, 100);
         controls.draw(spriteBatch);
         spriteBatch.end();

@@ -13,6 +13,8 @@ import com.mygdx.game.Main;
 import com.mygdx.game.model.Block;
 import com.mygdx.game.model.Player;
 
+import java.util.HashMap;
+
 import javax.swing.text.html.HTMLDocument;
 
 
@@ -50,7 +52,6 @@ public class Controls {
     }
 
     public void update(float touchX, float touchY, boolean isTouched, int pointer) {
-        //System.out.println(jumpBounds.x + ", " + jumpBounds.y + "\n" + stickBounds.x + ", " + stickBounds.y + "\n" + touchX + ", " + touchY);
         if (fingerNumber == -1 && isTouched && (isInsideControls(touchX, touchY, circleBounds) || isInsideControls(touchX, touchY, jumpBounds)))
             fingerNumber = pointer;
         if (isInsideJumpControls(touchX, touchY))
@@ -77,17 +78,24 @@ public class Controls {
         }
     }
 
-    public void getCameraRay(float x, float y, boolean toBuild) {
+    public void getCameraRay(float x, float y) {
         Ray ray = camera.getPickRay(x, y);
         touchedBlock = ray.getEndPoint(camera.direction.cpy(), Main.REACH * Block.side_size);
         touchedBlock.x /= Block.side_size;
         touchedBlock.y /= Block.side_size;
         touchedBlock.z /= Block.side_size;
         try {
-            if (toBuild) {
-                Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = Main.BLOCK_TYPES[2];
-            } else Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = "air";
+            Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = "air";
         } catch (ArrayIndexOutOfBoundsException ignored) {}
+    }
+
+    public void getCameraRay(float x, float y, Hotbar hotbar) {
+        Ray ray = camera.getPickRay(x, y);
+        touchedBlock = ray.getEndPoint(camera.direction.cpy(), Main.REACH * Block.side_size);
+        touchedBlock.x /= Block.side_size;
+        touchedBlock.y /= Block.side_size;
+        touchedBlock.z /= Block.side_size;
+        Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = hotbar.squares[Main.selectedSquareIndex].type;
     }
 
     public float getDistance(float dx, float dy) { return (float) Math.sqrt(dx * dx + dy * dy); }
