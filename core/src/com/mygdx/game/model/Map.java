@@ -17,17 +17,16 @@ public class Map {
     public Map(int sizeX, int sizeY) {
         this.sizeX = sizeX;
         this.sizeY = sizeY;
-        blockMap = new Block[sizeX * Chunk.sizeX][Main.MAX_HEIGHT + 1][sizeY * Chunk.sizeX];
+        blockMap = new Block[sizeX * Chunk.sizeX][Main.MAX_HEIGHT][sizeY * Chunk.sizeX];
         chunkMap = new Chunk[sizeX][sizeY];
     }
 
-    public void initialiseBlockMap() {
-        Model voidModel = new Model();
+    public void initialiseBlockMap(Model model) {
         for (int i = 0; i < sizeX * Chunk.sizeX; i++)
             for (int j = 0; j < sizeY * Chunk.sizeX; j++)
                 for (int k = 0; k < Main.MAX_HEIGHT; k++)
                     blockMap[i][k][j] = new Block(Block.side_size * i, Block.side_size * j,
-                            Block.side_size * k, (int) Block.side_size, 0, BlocksMaterial.blockTypes[0], voidModel);
+                            Block.side_size * k, (int) Block.side_size, 0, BlocksMaterial.blockTypes[0], model);
     }
 
     public void add_chunk(Chunk chunk) {

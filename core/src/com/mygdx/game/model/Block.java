@@ -41,16 +41,17 @@ public class Block extends GameObject {
                 -ls,-ls,-ls,  -ls,ls,-ls,  ls,ls,-ls,  ls,-ls,-ls, 0f,0f,1f);
 
         modelBuilder.part("left", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
-                -ls,-ls,ls,  -ls,-ls,-ls,  ls,-ls,-ls,  ls,-ls,ls, 0f,-1f,0f);
-
-        modelBuilder.part("box", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
-                -ls,-ls,ls, -ls,-ls,-ls, ls,-ls,-ls, ls,-ls,ls, 0f,1f,0f);
-
-        modelBuilder.part("box", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
                 -ls,-ls,ls, -ls,ls,ls, -ls,ls,-ls, -ls,-ls,-ls, -1f,0f,0f);
 
-        modelBuilder.part("box", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[2])).rect(
+        modelBuilder.part("right", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
                 ls,-ls,-ls, ls,ls,-ls, ls,ls,ls, ls,-ls,ls, 1f,0f,0f);
+
+        modelBuilder.part("back", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
+                -ls,ls,-ls, -ls,-ls,-ls, ls,ls,-ls, ls,-ls,-ls, 0f, -1f, 0f);
+
+        modelBuilder.part("bottom", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[2])).rect(
+                -ls,-ls,ls, -ls,-ls,-ls, ls,-ls,-ls, ls,-ls,ls, 0f,1f,0f);
+
         return modelBuilder.end();*/
         return modelBuilder.createBox(Block.side_size, Block.side_size, Block.side_size, BlocksMaterial.grass[2], attr);
     }

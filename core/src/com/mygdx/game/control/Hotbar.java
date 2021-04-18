@@ -37,8 +37,4 @@ public class Hotbar {
             }
         Main.selectedSquareX = square.x;
     }
-
-    public void setSelectedBlock(HotbarSquare square) {
-        //this.squares[1].texture = square.texture;
-    }
 }

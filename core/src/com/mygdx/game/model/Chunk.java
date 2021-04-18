@@ -12,22 +12,11 @@ import java.util.Map;
 
 public class Chunk {
     public static int sizeX = 16;
-    public static int sizeY = 16;
     public int chunkX;
     public int chunkY;
-    private Map<String, Block> blockMap;
     private Block[][][] bMap;
-    public Map<Integer, Block> coordsBlockMap;
-
-    public Chunk(Map<String, Block> blockMap, int chunkX, int chunkY) {
-        this.blockMap = blockMap;
-        this.chunkX = chunkX;
-        this.chunkY = chunkY;
-    }
 
     public Chunk(int startI, int startY, Block[][][] map, Model blockModel) {
-        blockMap = new HashMap<>();
-        coordsBlockMap = new HashMap<>();
         this.chunkY = 0;
         this.chunkX = 0;
         this.bMap = map;
@@ -47,39 +36,42 @@ public class Chunk {
                         yCoord * Block.side_size,
                         Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[2], blockModel);
                 bMap[i][yCoord][j] = block;
-                blockMap.put(Main.ID, block);
-                Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + yCoord;
+                Main.WORLD_MAP.blockMap[i][yCoord][j] = block;
                 for (int k = yCoord - 1; k >= 0; k--) {
                     block = new Block(Block.side_size * i,
                             (yCoord - k) * Block.side_size,
                             Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[2], blockModel);
-                    //if (k != yCoord - 2) block.isVisible = false;
+                    if (k != yCoord - 2) block.isVisible = false; // выключить прорисовку у всех блоков, кроме 2 пластов блоков
                     bMap[i][k][j] = block;
-                    blockMap.put(Main.ID, block);
-                    Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + k;
+                    Main.WORLD_MAP.blockMap[i][k][j] = block;
                 }
                 for (int k = yCoord + 1; k < Main.MAX_HEIGHT; k++) {
                     block = new Block(Block.side_size * i,
                             (yCoord - k) * Block.side_size,
                             Block.side_size * j, (int) Block.side_size, 0, BlocksMaterial.blockTypes[0], blockModel);
                     bMap[i][k][j] = block;
-                    blockMap.put(Main.ID, block);
-                    Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + k;
+                    Main.WORLD_MAP.blockMap[i][k][j] = block;
                 }
             }
         }
     }
 
     public void drawBlocks(ModelBatch modelBatch, Environment environment) {
-        for (Block block : blockMap.values())
-            block.draw(modelBatch, environment);
+        for (int i = this.chunkX * sizeX; i < Main.WORLD_MAP.sizeX * Chunk.sizeX; i++)
+            for (int j = this.chunkX * sizeX; j < Main.MAX_HEIGHT; j++)
+                for (int k = 0; k < Main.WORLD_MAP.sizeY * Chunk.sizeX; k++)
+                    Main.WORLD_MAP.blockMap[i][j][k].draw(modelBatch, environment);
+
+        for (Block[][] block: bMap)
+            for (Block[] block2: block)
+                for (Block block3: block2) block3.draw(modelBatch, environment);
     }
 
-    public Block getBlockByYCoord(int y) {
-        return coordsBlockMap.get(y);
+    public void setBlockType(int indexI, int indexY, int indexZ, String type) {
+        this.bMap[indexI][indexY][indexZ].setType(type);
     }
 
-    public void removeBlock(String ID) {
-        blockMap.remove(ID);
+    public void removeBlock(int indexI, int indexY, int indexZ) {
+        this.bMap[indexI][indexY][indexZ].setType("air");
     }
 }

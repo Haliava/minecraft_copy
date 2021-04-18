@@ -14,7 +14,6 @@ import com.mygdx.game.model.Map;
 import com.mygdx.game.view.GameScreen;
 
 public class Main extends Game {
-	public static String ID = "00000";
 	Screen gameScreen;
 	public static int REACH = 2;
 	public static int MAP_WIDTH = 1;

@@ -42,7 +42,7 @@ public class GameScreen implements Screen {
     ModelBatch modelBatch;
     SpriteBatch spriteBatch;
     ModelBuilder builder;
-    Model cube;
+    public Model cube;
     Model playerModel;
     Environment environment;
     CameraInputController cameraInputController;
@@ -64,7 +64,7 @@ public class GameScreen implements Screen {
                 (VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal|VertexAttributes.Usage.TextureCoordinates));
         debugInst = new ModelInstance(debugCube, 10 * Block.side_size, (Main.MIN_HEIGHT + 7) * Block.side_size, 10 * Block.side_size);
 
-        Main.WORLD_MAP.initialiseBlockMap();
+        Main.WORLD_MAP.initialiseBlockMap(cube);
         for (int i = 0; i < Main.MAP_WIDTH; i++) {
             for (int j = 0; j < Main.MAP_WIDTH; j++) {
                 Chunk currentChunk = new Chunk(Chunk.sizeX * i, Chunk.sizeX * j, Main.WORLD_MAP.blockMap, cube);
