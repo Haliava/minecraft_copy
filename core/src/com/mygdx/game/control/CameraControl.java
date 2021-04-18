@@ -74,7 +74,7 @@ public class CameraControl extends CameraInputController {
 
     public void getCameraRay(float x, float y, Hotbar hotbar) {
         Ray ray = camera.getPickRay(x, y);
-        // camera.direction.cpy() || controls.direction.cpy()
+        // camera.direction.cpy() | controls.direction.cpy()
         /*Vector3 tmp = new Vector3();
         BoundingBox out = new BoundingBox();
         for (int i = (int) ((player.coordX / Block.side_size) - Main.REACH); i < (player.coordX / Block.side_size) + Main.REACH; i++) {
