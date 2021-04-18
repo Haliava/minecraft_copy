@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.physics.bullet.collision._btMprSimplex_t;
 import com.mygdx.game.Main;
 import com.mygdx.game.utils.BlocksMaterial;
 
@@ -55,10 +56,13 @@ public class Block extends GameObject {
     }
 
     public void draw(ModelBatch modelBatch, Environment environment) {
+        if (!this.materials.contains(BlocksMaterial.materialMap.get(this.type), false) && this.type != "air") {
+            this.materials.get(0).set(BlocksMaterial.materialMap.get(this.type));
+        }
         if (!type.equals("air") && isVisible) modelBatch.render(this, environment);
     }
 
-    public float[] getCoords() {
-        return new float[] {x, y};
+    public void setType(String type) {
+        this.type = type;
     }
 }

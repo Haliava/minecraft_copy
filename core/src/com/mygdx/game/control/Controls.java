@@ -78,26 +78,6 @@ public class Controls {
         }
     }
 
-    public void getCameraRay(float x, float y) {
-        Ray ray = camera.getPickRay(x, y);
-        touchedBlock = ray.getEndPoint(camera.direction.cpy(), Main.REACH * Block.side_size);
-        touchedBlock.x /= Block.side_size;
-        touchedBlock.y /= Block.side_size;
-        touchedBlock.z /= Block.side_size;
-        try {
-            Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = "air";
-        } catch (ArrayIndexOutOfBoundsException ignored) {}
-    }
-
-    public void getCameraRay(float x, float y, Hotbar hotbar) {
-        Ray ray = camera.getPickRay(x, y);
-        touchedBlock = ray.getEndPoint(camera.direction.cpy(), Main.REACH * Block.side_size);
-        touchedBlock.x /= Block.side_size;
-        touchedBlock.y /= Block.side_size;
-        touchedBlock.z /= Block.side_size;
-        Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].type = hotbar.squares[Main.selectedSquareIndex].type;
-    }
-
     public float getDistance(float dx, float dy) { return (float) Math.sqrt(dx * dx + dy * dy); }
 
     public boolean isInsideControls(float touchX, float touchY, Circle obj) {

@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.collision.Ray;
 import com.mygdx.game.Main;
 import com.mygdx.game.model.Block;
 import com.mygdx.game.model.Player;
+import com.mygdx.game.utils.BlocksMaterial;
 import com.mygdx.game.view.GameScreen;
 
 public class CameraControl extends CameraInputController {
@@ -19,6 +20,7 @@ public class CameraControl extends CameraInputController {
     Controls controls;
     Hotbar hotbar;
     Vector3 touchedBlock = new Vector3(0, 0, 0);
+    int deltaT = 0;
 
     public CameraControl(GameScreen screen) {
         super(screen.camera);
@@ -40,7 +42,7 @@ public class CameraControl extends CameraInputController {
         if (tmpSquare == null && !(controls.isInsideControls(screenX, screenY, controls.circleBounds)) &&
                 !(controls.isInsideJumpControls(screenX, screenY))) {
             super.touchDown(screenX, screenY, pointer, button);
-            controls.getCameraRay(screenX, screenY);
+            getCameraRay(screenX, screenY, hotbar);
         } else if (tmpSquare != null) {
             hotbar.selectHotbarSquare(tmpSquare);
             hotbar.setSelectedBlock(tmpSquare);
@@ -62,5 +64,27 @@ public class CameraControl extends CameraInputController {
             super.touchDragged(screenX, screenY, pointer);
         multitouch(screenX, Main.HEIGHT - screenY, true, pointer);
         return false;
+    }
+
+    public void getCameraRay(float x, float y, Hotbar hotbar) {
+        Ray ray = camera.getPickRay(x, y);
+        touchedBlock = ray.getEndPoint(camera.direction.cpy(), Main.REACH * Block.side_size);
+        touchedBlock.x /= Block.side_size;
+        touchedBlock.y /= Block.side_size;
+        touchedBlock.z /= Block.side_size;
+        try {
+            Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].setType(hotbar.squares[Main.selectedSquareIndex].type);
+        } catch (ArrayIndexOutOfBoundsException ignored) {}
+    }
+
+    public void getCameraRay(float x, float y) {
+        Ray ray = camera.getPickRay(x, y);
+        touchedBlock = ray.getEndPoint(camera.direction.cpy(), Main.REACH * Block.side_size);
+        touchedBlock.x /= Block.side_size;
+        touchedBlock.y /= Block.side_size;
+        touchedBlock.z /= Block.side_size;
+        try {
+            Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].setType("air");
+        } catch (ArrayIndexOutOfBoundsException ignored) {}
     }
 }

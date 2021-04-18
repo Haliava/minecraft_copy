@@ -45,15 +45,15 @@ public class Chunk {
                 if (yCoord > Main.MAX_HEIGHT) yCoord = Main.MAX_HEIGHT;
                 Block block = new Block(Block.side_size * i,
                         yCoord * Block.side_size,
-                        Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[1], blockModel);
+                        Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[2], blockModel);
                 bMap[i][yCoord][j] = block;
                 blockMap.put(Main.ID, block);
                 Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + yCoord;
                 for (int k = yCoord - 1; k >= 0; k--) {
                     block = new Block(Block.side_size * i,
                             (yCoord - k) * Block.side_size,
-                            Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[1], blockModel);
-                    if (k != yCoord - 2) block.isVisible = false;
+                            Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[2], blockModel);
+                    //if (k != yCoord - 2) block.isVisible = false;
                     bMap[i][k][j] = block;
                     blockMap.put(Main.ID, block);
                     Main.ID = chunkX + "" + chunkY + "" + i + "" + j + "" + k;

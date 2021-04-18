@@ -30,6 +30,11 @@ public class Hotbar {
     }
 
     public void selectHotbarSquare(HotbarSquare square) {
+        for (int i = 0; i < squares.length; i++)
+            if (squares[i] == square) {
+                Main.selectedSquareIndex = i;
+                break;
+            }
         Main.selectedSquareX = square.x;
     }
 

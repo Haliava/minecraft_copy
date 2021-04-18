@@ -17,8 +17,8 @@ public class Main extends Game {
 	public static String ID = "00000";
 	Screen gameScreen;
 	public static int REACH = 2;
-	public static int MAP_WIDTH = 2;
-	public static int MAP_LENGTH = 2;
+	public static int MAP_WIDTH = 1;
+	public static int MAP_LENGTH = 1;
 	public static int RENDER_DISTANCE = 2;
 	public static int GRAVITY = 8; //15
 	public static int MAX_HEIGHT = 32;
