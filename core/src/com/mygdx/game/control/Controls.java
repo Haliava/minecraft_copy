@@ -54,7 +54,7 @@ public class Controls {
     public void update(float touchX, float touchY, boolean isTouched, int pointer) {
         if (fingerNumber == -1 && isTouched && (isInsideControls(touchX, touchY, circleBounds) || isInsideControls(touchX, touchY, jumpBounds)))
             fingerNumber = pointer;
-        if (isInsideJumpControls(touchX, touchY))
+        if (isInsideJumpControls(touchX, touchY) && isTouched)
             control(0, 0, Main.MAX_VELOCITY);
         if (fingerNumber == pointer && isTouched && isOverlapping(circleBounds, stickBounds, touchX, touchY))
             control(touchX, touchY, 0);

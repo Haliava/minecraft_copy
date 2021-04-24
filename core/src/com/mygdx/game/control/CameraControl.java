@@ -24,9 +24,13 @@ public class CameraControl extends CameraInputController {
     Controls controls;
     Hotbar hotbar;
     Vector3 touchedBlock = new Vector3(0, 0, 0);
-    int deltaT = 0;
+    float deltaShortT = 0f;
     Model model;
     int indexI, indexY, indexZ;
+    int[] rayCoords = new int[] {indexI, indexY, indexZ};
+    int tmpX, tmpY, tmpPointer, tmpButton;
+    int tmpI, tmpYC, tmpZ;
+    boolean longPress = false;
 
     public CameraControl(GameScreen screen) {
         super(screen.camera);
@@ -37,6 +41,13 @@ public class CameraControl extends CameraInputController {
         this.model = screen.cube;
     }
 
+    public void CheckForLongClick() {
+        if (this.isLongPressed(Main.LONG_PRESS_TIME)) {
+            longPress = true;
+            this.touchDown(tmpX, tmpY, tmpPointer, tmpButton);
+        }
+    }
+
     public void multitouch(int touchX, int touchY, boolean isTouched, int pointer) {
         for (int i = 0; i < 3; i++) {
             controls.update(touchX, touchY, isTouched, pointer);
@@ -45,11 +56,18 @@ public class CameraControl extends CameraInputController {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        tmpX = screenX;
+        tmpY = screenY;
+        tmpPointer = pointer;
+        tmpButton = button;
         HotbarSquare tmpSquare = hotbar.isInsideOfASquare(screenX, screenY);
         if (tmpSquare == null && !(controls.isInsideControls(screenX, screenY, controls.circleBounds)) &&
                 !(controls.isInsideJumpControls(screenX, screenY))) {
             super.touchDown(screenX, screenY, pointer, button);
-            getCameraRay(screenX, screenY, hotbar);
+            if (longPress) {
+                getCameraRay(screenX, screenY);
+                longPress = false;
+            } else deltaShortT += Main.TIME_SCALE;
         } else if (tmpSquare != null) {
             hotbar.selectHotbarSquare(tmpSquare);
         }
@@ -58,6 +76,7 @@ public class CameraControl extends CameraInputController {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (deltaShortT < Main.LONG_PRESS_TIME) getCameraRay(screenX, screenY, hotbar);
         if (!(controls.isInsideControls(screenX, screenY, controls.circleBounds)))
             super.touchUp(screenX, screenY, pointer, button);
         multitouch(screenX, Main.HEIGHT - screenY, false, pointer);
@@ -74,55 +93,52 @@ public class CameraControl extends CameraInputController {
 
     public void getCameraRay(float x, float y, Hotbar hotbar) {
         Ray ray = camera.getPickRay(x, y);
-        // camera.direction.cpy() | controls.direction.cpy()
-        /*Vector3 tmp = new Vector3();
-        BoundingBox out = new BoundingBox();
-        for (int i = (int) ((player.coordX / Block.side_size) - Main.REACH); i < (player.coordX / Block.side_size) + Main.REACH; i++) {
-            for (int j = (int) ((player.coordZ / Block.side_size) - Main.REACH); j < (player.coordZ / Block.side_size) + Main.REACH; j++) {
-                for (int k = (int) ((player.coordY / Block.side_size) - Main.REACH); k < (player.coordY / Block.side_size) + Main.REACH; k++) {
-                    out = Main.WORLD_MAP.blockMap[i][j][k].calculateBoundingBox(out);
-                    if (Intersector.intersectRayBounds(ray, out, tmp)) {
-                        if (Main.WORLD_MAP.blockMap[i][j][k].type != "air") {
-                            Block initialBlock = Main.WORLD_MAP.blockMap[i][j][k];
-                            Main.WORLD_MAP.blockMap[i][j + 1][k] = new Block(initialBlock.x,
-                                    initialBlock.y + Block.side_size, initialBlock.z, (int) Block.side_size,
-                                    10, hotbar.squares[Main.selectedSquareIndex].type, this.model);
-                        }
-                        return;
-                    }
-                }
-            }
-        }*/
-        touchedBlock = ray.getEndPoint(camera.direction.cpy(), Main.REACH * Block.side_size);
-        touchedBlock.x /= Block.side_size;
-        touchedBlock.y /= Block.side_size;
-        touchedBlock.z /= Block.side_size;
-        try {
-            indexI = (int) Math.floor(touchedBlock.x);
-            indexY = (int) Math.floor(touchedBlock.y);
-            indexZ = (int) Math.floor(touchedBlock.z);
-            if (Main.WORLD_MAP.blockMap[indexI][indexY][indexZ].type != "air") {
-                if (Main.WORLD_MAP.blockMap[indexI][indexY + 1][indexZ].type == "air") {
-                    Block initialBlock = Main.WORLD_MAP.blockMap[indexI][indexY][indexZ];
-                    Main.WORLD_MAP.blockMap[indexI][indexY + 1][indexZ] = new Block(initialBlock.x,
-                            initialBlock.y + Block.side_size, initialBlock.z, (int) Block.side_size,
-                            10, hotbar.squares[Main.selectedSquareIndex].type, this.model);
-                }
-                //Main.WORLD_MAP.blockMap[indexI][indexY + 1][indexZ].setType(hotbar.squares[Main.selectedSquareIndex].type);
-                //Main.WORLD_MAP.chunkMap[(int) (touchedBlock.x / Chunk.sizeX)][(int) (touchedBlock.z / Chunk.sizeX)].setBlockType(indexI, indexY, indexZ, hotbar.squares[Main.selectedSquareIndex].type);
-            }
-        } catch (ArrayIndexOutOfBoundsException ignored) {}
+        rayCoords = getBlockCoordsFromRay(ray);
+        if (rayCoords == null) return;
+        indexI = rayCoords[0]; indexY = rayCoords[1]; indexZ = rayCoords[2];
+        if (Main.WORLD_MAP.blockMap[indexI][indexY + 1][indexZ].type == "air") {
+            Block initialBlock = Main.WORLD_MAP.blockMap[indexI][indexY][indexZ];
+            Main.WORLD_MAP.blockMap[indexI][indexY + 1][indexZ] = new Block(initialBlock.x,
+                    initialBlock.y + Block.side_size, initialBlock.z, (int) Block.side_size,
+                    10, hotbar.squares[Main.selectedSquareIndex].type, this.model);
+        } else if (indexZ + 1 < Chunk.sizeX && Main.WORLD_MAP.blockMap[indexI][indexY][indexZ + 1].type == "air") {
+            Block initialBlock = Main.WORLD_MAP.blockMap[indexI][indexY][indexZ];
+            Main.WORLD_MAP.blockMap[indexI][indexY][indexZ + 1] = new Block(initialBlock.x,
+                    initialBlock.y, initialBlock.z + Block.side_size, (int) Block.side_size,
+                    10, hotbar.squares[Main.selectedSquareIndex].type, this.model);
+        }
     }
 
     public void getCameraRay(float x, float y) {
         Ray ray = camera.getPickRay(x, y);
-        touchedBlock = ray.getEndPoint(camera.direction.cpy(), Main.REACH * Block.side_size);
-        touchedBlock.x /= Block.side_size;
-        touchedBlock.y /= Block.side_size;
-        touchedBlock.z /= Block.side_size;
+        rayCoords = getBlockCoordsFromRay(ray);
+        if (rayCoords == null) return;
+        indexI = rayCoords[0]; indexY = rayCoords[1]; indexZ = rayCoords[2];
         try {
-            Main.WORLD_MAP.blockMap[(int) Math.floor(touchedBlock.x)][(int) Math.floor(touchedBlock.y)][(int) Math.floor(touchedBlock.z)].setType("air");
             Main.WORLD_MAP.blockMap[indexI][indexY][indexZ].setType("air");
-        } catch (ArrayIndexOutOfBoundsException ignored) {}
+        } catch (ArrayIndexOutOfBoundsException ignored) {
+        }
+    }
+
+    public int[] getBlockCoordsFromRay(Ray ray) {
+        int resI = -1; int resY = -1; int resZ = -1;
+        for (int i = Main.REACH * 2; i > 1; i--) {
+            touchedBlock = ray.getEndPoint(camera.direction.cpy(), i * Block.side_size);
+            touchedBlock.x /= Block.side_size;
+            touchedBlock.y /= Block.side_size;
+            touchedBlock.z /= Block.side_size;
+            tmpI = (int) Math.floor(touchedBlock.x);
+            tmpYC = (int) Math.floor(touchedBlock.y);
+            tmpZ = (int) Math.floor(touchedBlock.z);
+            try {
+                if (Main.WORLD_MAP.blockMap[tmpI][tmpYC][tmpZ].type != "air") {
+                    resI = tmpI;
+                    resY = tmpYC;
+                    resZ = tmpZ;
+                }
+            } catch (ArrayIndexOutOfBoundsException ignored) { }
+        }
+        if (resI > -1 && resY > -1 && resZ > -1) return new int[] {resI, resY, resZ};
+        else return null;
     }
 }

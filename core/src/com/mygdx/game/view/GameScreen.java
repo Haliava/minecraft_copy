@@ -117,6 +117,7 @@ public class GameScreen implements Screen {
         modelBatch.render(player, environment);
         modelBatch.render(debugInst, environment);
         player.update(controls, delta);
+        cameraControl.CheckForLongClick();
         modelBatch.end();
         spriteBatch.begin();
         for (int i = 0; i < 9; i++) {

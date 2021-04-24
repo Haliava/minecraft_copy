@@ -15,16 +15,18 @@ import com.mygdx.game.view.GameScreen;
 
 public class Main extends Game {
 	Screen gameScreen;
-	public static int REACH = 2;
+	public static int REACH = 3;
 	public static int MAP_WIDTH = 1;
 	public static int MAP_LENGTH = 1;
-	public static int RENDER_DISTANCE = 2;
+	public static int RENDER_DISTANCE = 1;
 	public static int GRAVITY = 8; //15
 	public static int MAX_HEIGHT = 32;
 	public static int MIN_HEIGHT = 0;
 	public static int WIDTH = 2200;
 	public static int HEIGHT = 1080;
 	public static float MAX_VELOCITY = Block.side_size / 15;
+	public static float LONG_PRESS_TIME = 0.5f;
+	public static float TIME_SCALE = 0.05f;
 	public static TextureAtlas atlas;
 	public static TextureAtlas hotbar_atlas;
 	public static Map WORLD_MAP = new Map(MAP_WIDTH, MAP_LENGTH);
@@ -43,7 +45,7 @@ public class Main extends Game {
 
 	@Override
 	public void render() {
-		gameScreen.render(0.05f);
+		gameScreen.render(TIME_SCALE);
 	}
 
 	@Override
