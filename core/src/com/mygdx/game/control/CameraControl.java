@@ -80,7 +80,8 @@ public class CameraControl extends CameraInputController {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         if (!(controls.isInsideControls(screenX, screenY, controls.circleBounds)) &&
-                !controls.isInsideJumpControls(screenX, Main.HEIGHT - screenY))
+                !controls.isInsideJumpControls(screenX, Main.HEIGHT - screenY) &&
+                hotbar.isInsideOfASquare(screenX, screenY) == null)
             if (deltaShortT < Main.LONG_PRESS_TIME) {
                 deltaShortT = 0;
                 getCameraRay(screenX, screenY, hotbar);
