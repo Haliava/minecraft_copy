@@ -62,7 +62,7 @@ public class Player extends GameObject {
         if (controls.direction.x != Math.sqrt(-1) && controls.direction.z != Math.sqrt(-1)) {
             velocityX = controls.direction.x * Main.MAX_VELOCITY;
             velocityZ = controls.direction.z * Main.MAX_VELOCITY;
-            velocityY = (float) (controls.direction.y * 2);
+            velocityY = controls.direction.y * 2;
             if (velocityX != 0 && velocityY != 0 && velocityZ != 0) isMoving = true;
 
             try {

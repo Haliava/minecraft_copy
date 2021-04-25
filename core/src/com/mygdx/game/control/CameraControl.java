@@ -18,6 +18,8 @@ import com.mygdx.game.model.Player;
 import com.mygdx.game.utils.BlocksMaterial;
 import com.mygdx.game.view.GameScreen;
 
+import java.util.Random;
+
 public class CameraControl extends CameraInputController {
     Camera camera;
     Player player;
@@ -61,12 +63,13 @@ public class CameraControl extends CameraInputController {
         tmpPointer = pointer;
         tmpButton = button;
         HotbarSquare tmpSquare = hotbar.isInsideOfASquare(screenX, screenY);
+        System.out.println((controls.isInsideJumpControls(screenX, (Main.HEIGHT - screenY))));
+        System.out.println(controls.jumpBounds.x + ", " + controls.jumpBounds.y + ", " + screenX + ", " + (Main.HEIGHT - screenY));
         if (tmpSquare == null && !(controls.isInsideControls(screenX, screenY, controls.circleBounds)) &&
-                !(controls.isInsideJumpControls(screenX, screenY))) {
+                !(controls.isInsideJumpControls(screenX, Main.HEIGHT - screenY))) {
             super.touchDown(screenX, screenY, pointer, button);
             if (longPress) {
                 getCameraRay(screenX, screenY);
-                longPress = false;
             } else deltaShortT += Main.TIME_SCALE;
         } else if (tmpSquare != null) {
             hotbar.selectHotbarSquare(tmpSquare);
@@ -76,8 +79,12 @@ public class CameraControl extends CameraInputController {
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        if (deltaShortT < Main.LONG_PRESS_TIME) getCameraRay(screenX, screenY, hotbar);
-        if (!(controls.isInsideControls(screenX, screenY, controls.circleBounds)))
+        if (!(controls.isInsideControls(screenX, screenY, controls.circleBounds)) &&
+                !controls.isInsideJumpControls(screenX, Main.HEIGHT - screenY))
+            if (deltaShortT < Main.LONG_PRESS_TIME) {
+                deltaShortT = 0;
+                getCameraRay(screenX, screenY, hotbar);
+            }
             super.touchUp(screenX, screenY, pointer, button);
         multitouch(screenX, Main.HEIGHT - screenY, false, pointer);
         return false;
@@ -117,7 +124,7 @@ public class CameraControl extends CameraInputController {
         try {
             Main.WORLD_MAP.blockMap[indexI][indexY][indexZ].setType("air");
         } catch (ArrayIndexOutOfBoundsException ignored) {
-        }
+        } finally { longPress = false; }
     }
 
     public int[] getBlockCoordsFromRay(Ray ray) {
