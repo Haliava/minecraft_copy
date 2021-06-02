@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.bullet.collision._btMprSimplex_t;
 import com.mygdx.game.Main;
 import com.mygdx.game.utils.BlocksMaterial;
@@ -28,32 +29,33 @@ public class Block extends GameObject {
         super(x, y, z, size, health, model);
         this.type = type;
         isVisible = true;
+        super.transform.rotate(Vector3.Z, 90);
     }
 
     public static Model createModel(ModelBuilder modelBuilder) {
         int attr = (VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal|VertexAttributes.Usage.TextureCoordinates);
         /*float ls = Block.side_size / 2; // short for localSize
         modelBuilder.begin();
-        modelBuilder.part("top", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[0])).rect(
+        modelBuilder.part("top", GL20.GL_TRIANGLES, attr, BlocksMaterial.grass[0]).rect(
                 -ls,ls,-ls,  -ls,ls,ls,  ls,ls,ls,  ls,ls,-ls, 0f,0f,-1f);
 
-        modelBuilder.part("front", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
-                -ls,-ls,-ls,  -ls,ls,-ls,  ls,ls,-ls,  ls,-ls,-ls, 0f,0f,1f);
-
-        modelBuilder.part("left", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
-                -ls,-ls,ls, -ls,ls,ls, -ls,ls,-ls, -ls,-ls,-ls, -1f,0f,0f);
-
-        modelBuilder.part("right", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
-                ls,-ls,-ls, ls,ls,-ls, ls,ls,ls, ls,-ls,ls, 1f,0f,0f);
-
-        modelBuilder.part("back", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[1])).rect(
-                -ls,ls,-ls, -ls,-ls,-ls, ls,ls,-ls, ls,-ls,-ls, 0f, -1f, 0f);
-
-        modelBuilder.part("bottom", GL20.GL_TRIANGLES, attr, new Material(BlocksMaterial.grass[2])).rect(
+        modelBuilder.part("bottom", GL20.GL_TRIANGLES, attr, BlocksMaterial.grass[2]).rect(
                 -ls,-ls,ls, -ls,-ls,-ls, ls,-ls,-ls, ls,-ls,ls, 0f,1f,0f);
 
+        modelBuilder.part("front", GL20.GL_TRIANGLES, attr, BlocksMaterial.grass[1]).rect(
+                -ls,-ls,-ls,  -ls,ls,-ls,  ls,ls,-ls,  ls,-ls,-ls, 0f,0f,1f);
+
+        modelBuilder.part("left", GL20.GL_TRIANGLES, attr, BlocksMaterial.grass[1]).rect(
+                -ls,-ls,ls, -ls,ls,ls, -ls,ls,-ls, -ls,-ls,-ls, -1f,0f,0f);
+
+        modelBuilder.part("right", GL20.GL_TRIANGLES, attr, BlocksMaterial.grass[1]).rect(
+                ls,-ls,-ls, ls,ls,-ls, ls,ls,ls, ls,-ls,ls, 1f,0f,0f);
+
+        modelBuilder.part("back", GL20.GL_TRIANGLES, attr, BlocksMaterial.grass[1]).rect(
+                -ls,ls,ls, -ls,-ls,ls, ls,-ls,ls, ls,ls,ls, 0f, -1f, 0f);
+
         return modelBuilder.end();*/
-        return modelBuilder.createBox(Block.side_size, Block.side_size, Block.side_size, BlocksMaterial.grass[2], attr);
+        return modelBuilder.createBox(Block.side_size, Block.side_size, Block.side_size, BlocksMaterial.grass[0], attr);
     }
 
     public void draw(ModelBatch modelBatch, Environment environment) {

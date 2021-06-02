@@ -1,11 +1,14 @@
 package com.mygdx.game.view;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
@@ -16,7 +19,11 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.CameraInputController;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.mygdx.game.Main;
 import com.mygdx.game.control.CameraControl;
 import com.mygdx.game.control.Controls;
@@ -30,24 +37,38 @@ import com.mygdx.game.utils.BlocksMaterial;
 import com.mygdx.game.utils.Material2D;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+/**
+ * @author Haliaven
+ * @version 0.0.7
+ * @since 2021-02-17
+ */
 public class GameScreen implements Screen {
     public Hotbar hotbar;
     public PerspectiveCamera camera;
     public Player player;
     public Controls controls;
-    ArrayList<int[]> toRender = new ArrayList<>();
-    Model debugCube;
-    ModelInstance debugInst;
-    ModelBatch modelBatch;
-    SpriteBatch spriteBatch;
-    ModelBuilder builder;
     public Model cube;
+    Texture arrow;
+    Rectangle arrowRect;
+    Main game;
+    ArrayList<int[]> toRender = new ArrayList<>();
+    ModelBuilder builder;
+    Chunk currentChunk;
     Model playerModel;
     Environment environment;
-    CameraInputController cameraInputController;
     CameraControl cameraControl;
     Texture outerCircle, innerCircle, jumpCircle;
+    Slider slider;
+    Vector2 touchedCoords = new Vector2();
+
+    public GameScreen(Main game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
@@ -56,18 +77,13 @@ public class GameScreen implements Screen {
         camera.near = .1f;
         camera.far = 500f;
 
-        modelBatch = new ModelBatch();
-        spriteBatch = new SpriteBatch();
         builder = new ModelBuilder();
         cube = Block.createModel(builder);
-        debugCube = builder.createBox(Block.side_size, Block.side_size, Block.side_size, BlocksMaterial.listOfMaterials[3],
-                (VertexAttributes.Usage.Position|VertexAttributes.Usage.Normal|VertexAttributes.Usage.TextureCoordinates));
-        debugInst = new ModelInstance(debugCube, 10 * Block.side_size, (Main.MIN_HEIGHT + 7) * Block.side_size, 10 * Block.side_size);
 
-        Main.WORLD_MAP.initialiseBlockMap(cube);
-        for (int i = 0; i < Main.MAP_WIDTH; i++) {
-            for (int j = 0; j < Main.MAP_WIDTH; j++) {
-                Chunk currentChunk = new Chunk(Chunk.sizeX * i, Chunk.sizeX * j, Main.WORLD_MAP.blockMap, cube);
+        /** Добавление и инициплизирование объектов класса {@link Chunk} в {@link com.mygdx.game.model.Map} мира **/
+        for (int i = 0; i < Main.WORLD_MAP.sizeX; i++) {
+            for (int j = 0; j < Main.WORLD_MAP.sizeY; j++) {
+                currentChunk = new Chunk(Chunk.sizeX * i, Chunk.sizeX * j, cube, true);
                 Main.WORLD_MAP.add_chunk(currentChunk);
             }
         }
@@ -85,15 +101,23 @@ public class GameScreen implements Screen {
         jumpCircle = new Texture("inner.png");
         controls = new Controls(outerCircle, innerCircle, jumpCircle, new Vector2(300, 300), Main.HEIGHT / 3, camera);
 
+        arrow = new Texture("ar.png");
+        arrowRect = new Rectangle(200, Main.HEIGHT - 300, 200, 200);
+
         hotbar = new Hotbar();
         for (int i = 0; i < 9; i++) {
             TextureRegion tmpRegion = Main.hotbar_atlas.findRegion("square" + (i + 1));
-            hotbar.setSquare(i, new HotbarSquare(tmpRegion));
+            HotbarSquare tmpSquare = new HotbarSquare(tmpRegion);
+            tmpSquare.setType(i == 0 ? i + 1: i);
+            hotbar.setSquare(i, tmpSquare);
         }
 
+        slider = new Slider(1, 100, 1, false, new Slider.SliderStyle());
+        slider.setBounds(0, 0, 1000, 500);
+        slider.setPosition(0, 0);
+        slider.setValue(1);
+
         cameraControl = new CameraControl(this);
-        cameraInputController = new CameraInputController(camera);
-        //Gdx.input.setInputProcessor(cameraInputController);
         Gdx.input.setInputProcessor(cameraControl);
     }
 
@@ -102,33 +126,49 @@ public class GameScreen implements Screen {
         Gdx.gl.glClearColor(135 / 255f, 206 / 255f, 235 / 255f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
         camera.position.set(player.x, player.y - Block.side_size, player.z);
-        debugInst.transform.translate(player.velocityX, 0, player.velocityZ);
         camera.update();
 
         player.getChunkCoords();
         createNearestChunks(player.currentChunkCoordX, player.currentChunkCoordY, Main.RENDER_DISTANCE);
 
-        modelBatch.begin(camera);
+        /** Отрисовка {@link Chunk} в радиуре прорисовки {@link Main.RENDER_DISTANCE} **/
+        game.modelBatch.begin(camera);
         for (int[] x: toRender) {
             try {
-                Main.WORLD_MAP.get_chunk(x[0], x[1]).drawBlocks(modelBatch, environment);
+                Main.WORLD_MAP.get_chunk(x[0], x[1]).drawBlocks(game.modelBatch, environment);
             } catch (ArrayIndexOutOfBoundsException ignored) { }
         }
-        modelBatch.render(player, environment);
-        modelBatch.render(debugInst, environment);
+        game.modelBatch.render(player, environment);
         player.update(controls, delta);
         cameraControl.CheckForLongClick();
-        modelBatch.end();
-        spriteBatch.begin();
+        game.modelBatch.end();
+        game.spriteBatch.begin();
+        game.spriteBatch.draw(arrow, arrowRect.x, arrowRect.y, arrowRect.width, arrowRect.height);
+        slider.draw(game.spriteBatch, (float) 0.8);
+        slider.updateVisualValue();
+
+        /** Отрисовка {@link HotbarSquare}  **/
         for (int i = 0; i < 9; i++) {
             float x = (float) (Main.WIDTH / 3.3 + Material2D.TEXTURE_2D_SIZE * i);
             if (x == Main.selectedSquareX) Main.selectedSquareIndex = i;
-            spriteBatch.draw(Material2D.hotbar_squares[i], x, 100);
-            hotbar.squares[i].drawInsides(spriteBatch);
+            game.spriteBatch.draw(Material2D.hotbar_squares[i], x, 100);
+            hotbar.squares[i].drawInsides(game.spriteBatch);
         }
-        spriteBatch.draw(Main.selectedSquareTexture, Main.selectedSquareX, 100);
-        controls.draw(spriteBatch);
-        spriteBatch.end();
+        game.spriteBatch.draw(Main.selectedSquareTexture, Main.selectedSquareX, 100);
+        controls.draw(game.spriteBatch);
+        game.spriteBatch.end();
+
+        if (Gdx.input.isTouched()) {
+            touchedCoords.set(Gdx.input.getX(), Main.HEIGHT - Gdx.input.getY());
+            if (arrowRect.contains(touchedCoords)) {
+                game.spriteBatch.dispose();
+                game.modelBatch.dispose();
+                this.dispose();
+                MenuScreen ms = new MenuScreen(game);
+                game.activeScreen = ms;
+                game.setScreen(ms);
+            }
+        }
     }
 
     public void createNearestChunks(int coordX, int coordY, int renderDistance) {
@@ -162,7 +202,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        modelBatch.dispose();
-        spriteBatch.dispose();
+        game.modelBatch.dispose();
+        game.spriteBatch.dispose();
     }
 }

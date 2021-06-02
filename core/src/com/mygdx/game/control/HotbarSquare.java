@@ -39,11 +39,14 @@ public class HotbarSquare {
                 (touchY >= this.y - Material2D.TEXTURE_2D_SIZE && touchY <= this.y);
     }
 
-    public void setTexture(TextureRegion texture) {
-        this.insideTexture = texture;
-    }
-
     public void drawInsides(SpriteBatch batch) {
         batch.draw(insideTexture, this.x + 15, this.y - Main.HEIGHT + 210, 80, 80);
+    }
+
+    public void setType(int typeNum) {
+        if (typeNum > BlocksMaterial.blockTypes.length) typeNum %= BlocksMaterial.blockTypes.length;
+        else if (typeNum == BlocksMaterial.blockTypes.length) typeNum = 1;
+        this.type = BlocksMaterial.blockTypes[typeNum];
+        this.insideTexture = BlocksMaterial.textureMap.get(this.type);
     }
 }

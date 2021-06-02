@@ -54,7 +54,7 @@ public class Controls {
     public void update(float touchX, float touchY, boolean isTouched, int pointer) {
         if (fingerNumber == -1 && isTouched && (isInsideControls(touchX, touchY, circleBounds) || isInsideControls(touchX, touchY, jumpBounds)))
             fingerNumber = pointer;
-        if (isInsideJumpControls(touchX, touchY) && isTouched) {
+        if (jumpBounds.contains(touchX, touchY)) {
             control(0, 0, Main.MAX_VELOCITY);
         }
         if (fingerNumber == pointer && isTouched && isOverlapping(circleBounds, stickBounds, touchX, touchY))
@@ -71,7 +71,7 @@ public class Controls {
         float deltaZ = circleBounds.y - stickBounds.y;
         float distance = getDistance(deltaX, deltaZ);
         if (z != 0 && !isJumping) {
-            direction.set(0, z, 0);
+            direction.set(0, Main.MAX_VELOCITY / 2, 0);
         } else if (distance == 0) direction.set(0, 0 ,0);
         else {
             direction.set(((deltaX / distance) * camera.direction.z - (deltaZ / distance) * camera.direction.x),

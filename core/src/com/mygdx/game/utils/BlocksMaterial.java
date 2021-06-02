@@ -26,7 +26,7 @@ public class BlocksMaterial {
     };
 
     public static TextureRegion[] textures = new TextureRegion[]{
-            Main.atlas.findRegion("grass"),
+            Main.atlas.findRegion("dirt"), //Main.atlas.findRegion("grass"),
             Main.atlas.findRegion("dirt"),
             Main.atlas.findRegion("stone"),
             Main.atlas.findRegion("planks_oak"),

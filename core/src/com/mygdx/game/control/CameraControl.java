@@ -63,8 +63,6 @@ public class CameraControl extends CameraInputController {
         tmpPointer = pointer;
         tmpButton = button;
         HotbarSquare tmpSquare = hotbar.isInsideOfASquare(screenX, screenY);
-        System.out.println((controls.isInsideJumpControls(screenX, (Main.HEIGHT - screenY))));
-        System.out.println(controls.jumpBounds.x + ", " + controls.jumpBounds.y + ", " + screenX + ", " + (Main.HEIGHT - screenY));
         if (tmpSquare == null && !(controls.isInsideControls(screenX, screenY, controls.circleBounds)) &&
                 !(controls.isInsideJumpControls(screenX, Main.HEIGHT - screenY))) {
             super.touchDown(screenX, screenY, pointer, button);
@@ -130,19 +128,20 @@ public class CameraControl extends CameraInputController {
 
     public int[] getBlockCoordsFromRay(Ray ray) {
         int resI = -1; int resY = -1; int resZ = -1;
-        for (int i = Main.REACH * 2; i > 1; i--) {
-            touchedBlock = ray.getEndPoint(camera.direction.cpy(), i * Block.side_size);
+        for (float i = 0; i < Main.REACH * 2; i += 0.2) {
+            touchedBlock = ray.getEndPoint(camera.direction.nor().cpy(), i * Block.side_size);
             touchedBlock.x /= Block.side_size;
             touchedBlock.y /= Block.side_size;
             touchedBlock.z /= Block.side_size;
             tmpI = (int) Math.floor(touchedBlock.x);
             tmpYC = (int) Math.floor(touchedBlock.y);
-            tmpZ = (int) Math.floor(touchedBlock.z);
+            tmpZ = (int) ((int) Math.floor(touchedBlock.z) + 0.4);
             try {
                 if (Main.WORLD_MAP.blockMap[tmpI][tmpYC][tmpZ].type != "air") {
                     resI = tmpI;
                     resY = tmpYC;
                     resZ = tmpZ;
+                    return new int[] {resI, resY, resZ};
                 }
             } catch (ArrayIndexOutOfBoundsException ignored) { }
         }

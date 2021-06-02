@@ -12,16 +12,23 @@ import java.util.Map;
 
 public class Chunk {
     public static int sizeX = 16;
+    public static int sizeY = 256;
     public int chunkX;
     public int chunkY;
 
-    public Chunk(int startI, int startY, Block[][][] map, Model blockModel) {
+    public Chunk(int startI, int startY, Model blockModel, boolean init) {
         this.chunkY = 0;
         this.chunkX = 0;
 
-        initialise(startI, startY, blockModel);
+        if (init) initialise(startI, startY, blockModel);
     }
 
+    /**
+     * Генерирует блоки в чанке в интервале
+     * @param startI - номер строки, с которой нужно начать генерацию
+     * @param startY - номер столбца, с которого нужно начать генерацию
+     * @param blockModel - {@link Model} блоков
+     */
     public void initialise(int startI, int startY, Model blockModel) {
         chunkX = startI / sizeX;
         chunkY = startY / sizeX;
@@ -32,13 +39,13 @@ public class Chunk {
                 if (yCoord > Main.MAX_HEIGHT) yCoord = Main.MAX_HEIGHT;
                 Block block = new Block(Block.side_size * i,
                         yCoord * Block.side_size,
-                        Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[2], blockModel);
+                        Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[3], blockModel);
                 Main.WORLD_MAP.blockMap[i][yCoord][j] = block;
-                for (int k = yCoord - 1; k >= 0; k--) {
+                for (int k = 0; k <= yCoord - 1; k++) {
                     block = new Block(Block.side_size * i,
                             (yCoord - k) * Block.side_size,
-                            Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[2], blockModel);
-                    if (k != yCoord - 2) block.isVisible = false; // выключить прорисовку у всех блоков, кроме 2 пластов блоков
+                            Block.side_size * j, (int) Block.side_size, 10, BlocksMaterial.blockTypes[3], blockModel);
+                    block.isVisible = false; // выключить прорисовку у всех блоков, кроме верхнего пласта
                     Main.WORLD_MAP.blockMap[i][k][j] = block;
                 }
                 for (int k = yCoord + 1; k < Main.MAX_HEIGHT; k++) {
@@ -52,10 +59,12 @@ public class Chunk {
     }
 
     public void drawBlocks(ModelBatch modelBatch, Environment environment) {
-        for (int i = this.chunkX * sizeX; i < Main.WORLD_MAP.sizeX * Chunk.sizeX; i++)
-            for (int j = this.chunkX * sizeX; j < Main.MAX_HEIGHT; j++)
-                for (int k = 0; k < Main.WORLD_MAP.sizeY * Chunk.sizeX; k++)
-                    Main.WORLD_MAP.blockMap[i][j][k].draw(modelBatch, environment);
+        try {
+            for (int i = this.chunkX * sizeX; i < Main.WORLD_MAP.sizeX * Chunk.sizeX; i++)
+                for (int j = this.chunkX * sizeX; j < Main.WORLD_MAP.sizeY * Chunk.sizeX; j++)
+                    for (int k = 0; k < Main.MAX_HEIGHT; k++)
+                        Main.WORLD_MAP.blockMap[i][k][j].draw(modelBatch, environment);
+        } catch (NullPointerException ignored) { }
     }
 
     public void setBlockType(int indexI, int indexY, int indexZ, String type) {

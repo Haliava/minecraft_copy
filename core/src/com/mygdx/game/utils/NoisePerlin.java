@@ -1,11 +1,13 @@
 package com.mygdx.game.utils;
 
+import com.mygdx.game.Main;
+
 public final class NoisePerlin {
 
     /**
      Initialization seed used to start the random number generator.
      */
-    public static int seed = 100;
+    public static int seed = Main.SEED;
 
     private static final int P = 8;
     private static final int B = 1 << P;
