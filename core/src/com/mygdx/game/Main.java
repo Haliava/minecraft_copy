@@ -23,9 +23,9 @@ public class Main extends Game {
 	public Screen activeScreen;
 	public static int SEED = 109128301;
 	public static int REACH = 2;
-	public static int MAP_WIDTH = 4;
-	public static int MAP_LENGTH = 4;
-	public static int RENDER_DISTANCE = 1;
+	public static int MAP_WIDTH = 2;
+	public static int MAP_LENGTH = 2;
+	public static int RENDER_DISTANCE = 10;
 	public static int GRAVITY = 15;
 	public static int MAX_HEIGHT = 32;
 	public static int MIN_HEIGHT = 0;
