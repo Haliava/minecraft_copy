@@ -2,14 +2,18 @@ package com.mygdx.game.view;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttributes;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -35,9 +39,12 @@ import com.mygdx.game.model.Player;
 import com.badlogic.gdx.graphics.Texture;
 import com.mygdx.game.utils.BlocksMaterial;
 import com.mygdx.game.utils.Material2D;
+import com.mygdx.game.utils.NoisePerlin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -48,12 +55,17 @@ import javax.swing.event.ChangeListener;
  * @since 2021-02-17
  */
 public class GameScreen implements Screen {
+    public static ArrayList<String> placedBlocks = new ArrayList<>();
     public Hotbar hotbar;
     public PerspectiveCamera camera;
     public Player player;
     public Controls controls;
     public Model cube;
+    BitmapFont font;
+    FreeTypeFontGenerator generator;
+    FreeTypeFontGenerator.FreeTypeFontParameter parameter;
     Texture arrow;
+    String[] data;
     Rectangle arrowRect;
     Main game;
     ArrayList<int[]> toRender = new ArrayList<>();
@@ -65,14 +77,17 @@ public class GameScreen implements Screen {
     Texture outerCircle, innerCircle, jumpCircle;
     Slider slider;
     Vector2 touchedCoords = new Vector2();
+    SpriteBatch spriteBatch;
+    ModelBatch modelBatch;
 
     public GameScreen(Main game) {
         this.game = game;
+        NoisePerlin.seed = Main.SEED;
     }
 
     @Override
     public void show() {
-        camera = new PerspectiveCamera(75, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera = new PerspectiveCamera(Main.FOV, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.position.set(0f, 12f, 0f);
         camera.near = .1f;
         camera.far = 500f;
@@ -80,11 +95,25 @@ public class GameScreen implements Screen {
         builder = new ModelBuilder();
         cube = Block.createModel(builder);
 
+        modelBatch = new ModelBatch();
+        spriteBatch = new SpriteBatch();
+
         /** Добавление и инициплизирование объектов класса {@link Chunk} в {@link com.mygdx.game.model.Map} мира **/
         for (int i = 0; i < Main.WORLD_MAP.sizeX; i++) {
             for (int j = 0; j < Main.WORLD_MAP.sizeY; j++) {
                 currentChunk = new Chunk(Chunk.sizeX * i, Chunk.sizeX * j, cube, true);
                 Main.WORLD_MAP.add_chunk(currentChunk);
+            }
+        }
+
+        Preferences prefs = Gdx.app.getPreferences("maps");
+        if (prefs.contains(String.valueOf(Main.SEED))){
+            if (prefs.getString(String.valueOf(Main.SEED)) != "") {
+                for (String elem: prefs.getString(String.valueOf(Main.SEED)).split(",")) {
+                    data = elem.split(" ");
+                    Main.WORLD_MAP.blockMap[Integer.parseInt(data[0])][Main.MAX_HEIGHT - Integer.parseInt(data[1])][Integer.parseInt(data[2])].type = "dirt";
+                    if (data[3] != "air") Main.WORLD_MAP.blockMap[Integer.parseInt(data[0])][Integer.parseInt(data[1])][Integer.parseInt(data[2])].isVisible = true;
+                }
             }
         }
 
@@ -117,6 +146,13 @@ public class GameScreen implements Screen {
         slider.setPosition(0, 0);
         slider.setValue(1);
 
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("font.TTF"));
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 96;
+        font = generator.generateFont(parameter);
+        font.setColor(Color.BLACK);
+        generator.dispose();
+
         cameraControl = new CameraControl(this);
         Gdx.input.setInputProcessor(cameraControl);
     }
@@ -131,38 +167,47 @@ public class GameScreen implements Screen {
         player.getChunkCoords();
         createNearestChunks(player.currentChunkCoordX, player.currentChunkCoordY, Main.RENDER_DISTANCE);
 
+        modelBatch.begin(camera);
         /** Отрисовка {@link Chunk} в радиуре прорисовки {@link Main.RENDER_DISTANCE} **/
-        game.modelBatch.begin(camera);
         for (int[] x: toRender) {
             try {
-                Main.WORLD_MAP.get_chunk(x[0], x[1]).drawBlocks(game.modelBatch, environment);
+                Main.WORLD_MAP.get_chunk(x[0], x[1]).drawBlocks(modelBatch, environment);
             } catch (ArrayIndexOutOfBoundsException ignored) { }
         }
-        game.modelBatch.render(player, environment);
+        modelBatch.render(player, environment);
         player.update(controls, delta);
         cameraControl.CheckForLongClick();
-        game.modelBatch.end();
-        game.spriteBatch.begin();
-        game.spriteBatch.draw(arrow, arrowRect.x, arrowRect.y, arrowRect.width, arrowRect.height);
-        slider.draw(game.spriteBatch, (float) 0.8);
+        modelBatch.end();
+        spriteBatch.begin();
+        spriteBatch.draw(arrow, arrowRect.x, arrowRect.y, arrowRect.width, arrowRect.height);
+        slider.draw(spriteBatch, (float) 0.8);
         slider.updateVisualValue();
 
         /** Отрисовка {@link HotbarSquare}  **/
         for (int i = 0; i < 9; i++) {
             float x = (float) (Main.WIDTH / 3.3 + Material2D.TEXTURE_2D_SIZE * i);
             if (x == Main.selectedSquareX) Main.selectedSquareIndex = i;
-            game.spriteBatch.draw(Material2D.hotbar_squares[i], x, 100);
-            hotbar.squares[i].drawInsides(game.spriteBatch);
+            spriteBatch.draw(Material2D.hotbar_squares[i], x, 100);
+            hotbar.squares[i].drawInsides(spriteBatch);
         }
-        game.spriteBatch.draw(Main.selectedSquareTexture, Main.selectedSquareX, 100);
-        controls.draw(game.spriteBatch);
-        game.spriteBatch.end();
+        spriteBatch.draw(Main.selectedSquareTexture, Main.selectedSquareX, 100);
+        controls.draw(spriteBatch);
+        font.draw(spriteBatch, "FPS: " + Gdx.graphics.getFramesPerSecond(), Main.WIDTH - Main.WIDTH / 4, Main.HEIGHT - 100);
+        spriteBatch.end();
 
         if (Gdx.input.isTouched()) {
             touchedCoords.set(Gdx.input.getX(), Main.HEIGHT - Gdx.input.getY());
             if (arrowRect.contains(touchedCoords)) {
-                game.spriteBatch.dispose();
-                game.modelBatch.dispose();
+                Preferences prefs = Gdx.app.getPreferences("maps");
+                String tmpSeed = String.valueOf(Main.SEED);
+                String res = "";
+                for (String elem: placedBlocks) {
+                    if (Integer.parseInt(elem.split(" ")[1]) < 0) continue;
+                    res += elem + ",";
+                }
+                prefs.putString(tmpSeed, res);
+                prefs.flush();
+
                 this.dispose();
                 MenuScreen ms = new MenuScreen(game);
                 game.activeScreen = ms;
@@ -202,7 +247,21 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        game.modelBatch.dispose();
-        game.spriteBatch.dispose();
+        modelBatch.dispose();
+        spriteBatch.dispose();
+        outerCircle.dispose();
+        innerCircle.dispose();
+        jumpCircle.dispose();
+        arrow.dispose();
+        cube.dispose();
+        camera = null;
+        builder = null;
+        environment = null;
+        player = null;
+        toRender = null;
+        hotbar = null;
+        controls = null;
+        Main.WORLD_MAP.clearBlockMap();
+        Main.WORLD_MAP.clearChunkMap();
     }
 }

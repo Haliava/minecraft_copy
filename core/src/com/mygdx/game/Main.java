@@ -18,6 +18,7 @@ import com.mygdx.game.view.GameScreen;
 import com.mygdx.game.view.MenuScreen;
 
 public class Main extends Game {
+	public static int FOV = 100;
 	public static Skin skin;
 	public Screen activeScreen;
 	public static int SEED = 109128301;
@@ -39,8 +40,6 @@ public class Main extends Game {
 	public static Texture selectedSquareTexture;
 	public static int selectedSquareX = (int) (Main.WIDTH / 3.3);
 	public static int selectedSquareIndex = 0;
-	public ModelBatch modelBatch;
-	public SpriteBatch spriteBatch;
 
 	@Override
 	public void create() {
@@ -50,11 +49,10 @@ public class Main extends Game {
 		hotbar_atlas = new TextureAtlas(Gdx.files.internal("hotbar/hotbar.atlas"));
 		selectedSquareTexture = new Texture("hotbar/selected_square.jpg");
 
-		modelBatch = new ModelBatch();
-		spriteBatch = new SpriteBatch();
-
-		activeScreen = new MenuScreen(this);
-		setScreen(activeScreen);
+		if (activeScreen == null) {
+			activeScreen = new MenuScreen(this);
+			setScreen(activeScreen);
+		}
 	}
 
 	@Override

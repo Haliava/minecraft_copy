@@ -20,6 +20,7 @@ public class Chunk {
         this.chunkY = 0;
         this.chunkX = 0;
 
+        NoisePerlin.init();
         if (init) initialise(startI, startY, blockModel);
     }
 

@@ -31,7 +31,7 @@ public class Map {
 
     public Chunk get_chunk(int[] x) { return chunkMap[x[0]][x[1]]; }
 
-    public String toString() {
-        return Arrays.deepToString(chunkMap);
-    }
+    public void clearChunkMap() { chunkMap = new Chunk[sizeX][sizeY]; }
+
+    public void clearBlockMap() { blockMap = new Block[sizeX * Chunk.sizeX][Main.MAX_HEIGHT][sizeY * Chunk.sizeX]; }
 }

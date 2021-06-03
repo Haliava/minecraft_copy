@@ -1,6 +1,8 @@
 package com.mygdx.game.control;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
@@ -21,6 +23,7 @@ import com.mygdx.game.view.GameScreen;
 import java.util.Random;
 
 public class CameraControl extends CameraInputController {
+    Sound sound;
     Camera camera;
     Player player;
     Controls controls;
@@ -41,6 +44,8 @@ public class CameraControl extends CameraInputController {
         this.controls = screen.controls;
         this.hotbar = screen.hotbar;
         this.model = screen.cube;
+
+        sound = Gdx.audio.newSound(Gdx.files.internal("stone.mp3"));
     }
 
     public void CheckForLongClick() {
@@ -104,14 +109,20 @@ public class CameraControl extends CameraInputController {
         indexI = rayCoords[0]; indexY = rayCoords[1]; indexZ = rayCoords[2];
         if (Main.WORLD_MAP.blockMap[indexI][indexY + 1][indexZ].type == "air") {
             Block initialBlock = Main.WORLD_MAP.blockMap[indexI][indexY][indexZ];
-            Main.WORLD_MAP.blockMap[indexI][indexY + 1][indexZ] = new Block(initialBlock.x,
+            Block newBlock = new Block(initialBlock.x,
                     initialBlock.y + Block.side_size, initialBlock.z, (int) Block.side_size,
                     10, hotbar.squares[Main.selectedSquareIndex].type, this.model);
+            Main.WORLD_MAP.blockMap[indexI][indexY + 1][indexZ] = newBlock;
+            GameScreen.placedBlocks.add(indexI + " " + (indexY + 1) + " " + indexZ + " " + newBlock.type);
+            sound.play(5);
         } else if (indexZ + 1 < Chunk.sizeX && Main.WORLD_MAP.blockMap[indexI][indexY][indexZ + 1].type == "air") {
             Block initialBlock = Main.WORLD_MAP.blockMap[indexI][indexY][indexZ];
-            Main.WORLD_MAP.blockMap[indexI][indexY][indexZ + 1] = new Block(initialBlock.x,
+            Block newBlock = new Block(initialBlock.x,
                     initialBlock.y, initialBlock.z + Block.side_size, (int) Block.side_size,
                     10, hotbar.squares[Main.selectedSquareIndex].type, this.model);
+            Main.WORLD_MAP.blockMap[indexI][indexY][indexZ + 1] = newBlock;
+            GameScreen.placedBlocks.add(indexI + " " + indexY + " " + (indexZ + 1) + " " + newBlock.type);
+            sound.play(5);
         }
     }
 
@@ -122,6 +133,8 @@ public class CameraControl extends CameraInputController {
         indexI = rayCoords[0]; indexY = rayCoords[1]; indexZ = rayCoords[2];
         try {
             Main.WORLD_MAP.blockMap[indexI][indexY][indexZ].setType("air");
+            GameScreen.placedBlocks.add(indexI + " " + indexY + " " + indexZ + " " + "air");
+            sound.play(5);
         } catch (ArrayIndexOutOfBoundsException ignored) {
         } finally { longPress = false; }
     }
@@ -143,7 +156,7 @@ public class CameraControl extends CameraInputController {
                     resZ = tmpZ;
                     return new int[] {resI, resY, resZ};
                 }
-            } catch (ArrayIndexOutOfBoundsException ignored) { }
+            } catch (Exception ignored) { }
         }
         if (resI > -1 && resY > -1 && resZ > -1) return new int[] {resI, resY, resZ};
         else return null;

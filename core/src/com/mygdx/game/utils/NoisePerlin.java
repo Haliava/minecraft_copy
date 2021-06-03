@@ -189,7 +189,7 @@ public final class NoisePerlin {
         return points[i % 32];
     }
 
-    private static void init() {
+    public static void init() {
         int i, j, k;
         double u, v, w, U, V, W, Hi, Lo;
         java.util.Random r = new java.util.Random(seed);

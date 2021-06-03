@@ -42,6 +42,15 @@ public class BlocksMaterial {
             "bedrock"
     };
 
+    public static HashMap<String, String> typesToInt = new HashMap() {{
+        put("air", "0");
+        put("grass", "1");
+        put("dirt", "2");
+        put("stone", "3");
+        put("planks_oak", "4");
+        put("bedrock", "5");
+    }};
+
     public static HashMap<String, Material> materialMap = new HashMap() {{
         put("grass", listOfMaterials[1]);
         put("dirt", listOfMaterials[1]);
